@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/mcsymiv/go-stripe/config"
+	"github.com/mcsymiv/go-stripe/models"
 )
 
 const JsonContentType = "application/json"
@@ -29,9 +30,17 @@ func CreateSessionRepository() {
 
 func (sr *SessionRepository) NewSession() {
 
-	var jsonStr = []byte(`{"capabilities": {"alwaysMatch": {"acceptInsecureCerts": true}}}`)
+	params := &models.Capabilities{
+		AlwaysMatch: models.AlwaysMatch{
+			AcceptInsecureCerts: true,
+		},
+	}
+	data, err := json.Marshal(params)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	rr, err := DoRequest("POST", fmt.Sprintf("%s%s", config.DriverUrl, sr.Config.Path), jsonStr)
+	rr, err := DoRequest("POST", fmt.Sprintf("%s%s", config.DriverUrl, sr.Config.Path), data)
 	if err != nil {
 		fmt.Println(err)
 	}

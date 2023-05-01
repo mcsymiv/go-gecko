@@ -6,7 +6,8 @@ import (
 
 const DriverUrl = "http://localhost:4444"
 
-// rename to gecko session related confir
+// SessionConfig
+// Global config struct
 type SessionConfig struct {
 	Path string
 	Id   string
