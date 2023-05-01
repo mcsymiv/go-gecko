@@ -14,21 +14,7 @@ import (
 
 const JsonContentType = "application/json"
 
-var SessionRepo *SessionRepository
-
-type SessionRepository struct {
-	Config *config.SessionConfig
-}
-
-func CreateSessionRepository() {
-	SessionRepo = &SessionRepository{
-		Config: &config.SessionConfig{
-			Path: "/session",
-		},
-	}
-}
-
-func (sr *SessionRepository) NewSession() {
+func NewSession() *config.SessionConfig {
 
 	params := &models.Capabilities{
 		AlwaysMatch: models.AlwaysMatch{
@@ -40,19 +26,21 @@ func (sr *SessionRepository) NewSession() {
 		fmt.Println(err)
 	}
 
-	rr, err := DoRequest("POST", fmt.Sprintf("%s%s", config.DriverUrl, sr.Config.Path), data)
+	rr, err := DoRequest("POST", fmt.Sprintf("%s%s", config.DriverUrl, "/session"), data)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	var res config.RemoteResponse
+
 	err = json.Unmarshal(rr, &res)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
 
-	fmt.Printf("%+v", res.Value.SessionId)
-	sr.Config.Id = res.Value.SessionId
+	return &config.SessionConfig{
+		Id: res.Value.SessionId,
+	}
 }
 
 func DoRequest(method, url string, data []byte) (json.RawMessage, error) {

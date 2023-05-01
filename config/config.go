@@ -9,8 +9,7 @@ const DriverUrl = "http://localhost:4444"
 // SessionConfig
 // Global config struct
 type SessionConfig struct {
-	Path string
-	Id   string
+	Id string
 }
 
 type LogginConfig struct {
