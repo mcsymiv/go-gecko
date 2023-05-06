@@ -5,18 +5,18 @@ import (
 	"fmt"
 
 	"github.com/mcsymiv/go-gecko/config"
-	"github.com/mcsymiv/go-gecko/models"
 	"github.com/mcsymiv/go-gecko/request"
 )
 
-func New() *config.SessionConfig {
+func New(capsFn ...config.CapabilitiesFunc) *config.SessionConfig {
 
-	params := &models.Capabilities{
-		AlwaysMatch: models.AlwaysMatch{
-			AcceptInsecureCerts: true,
-		},
+	c := config.DefaultCapabilities()
+	for _, capFn := range capsFn {
+		capFn(&c)
 	}
-	data, err := json.Marshal(params)
+	fmt.Printf("%+v", c)
+
+	data, err := json.Marshal(c)
 	if err != nil {
 		fmt.Println(err)
 	}

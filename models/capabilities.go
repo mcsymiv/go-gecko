@@ -6,4 +6,5 @@ type Capabilities struct {
 
 type AlwaysMatch struct {
 	AcceptInsecureCerts bool
+	BrowserName         string
 }
