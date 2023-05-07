@@ -10,9 +10,9 @@ Aftet that, run the test:
 ```
 go test -v -count=1 test/demo/session_test.go -run TestSession
 ```
-`-v`, shows test output in verbose mode
-`-count=1`, discards test cache
-`test/demo/session_test.go`, specifies test directory
+`-v`, shows test output in verbose mode  
+`-count=1`, discards test cache  
+`test/demo/session_test.go`, specifies test directory  
 `-run`, pattern for test name  
 ```
 func TestSession(t *testing.T) {
