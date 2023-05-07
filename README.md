@@ -14,22 +14,22 @@ go test -v -count=1 test/demo/session_test.go -run TestSession
 `-count=1`, discards test cache  
 `test/demo/session_test.go`, specifies test directory  
 `-run`, pattern for test name  
+  
 ```
 func TestSession(t *testing.T) {
-
 	// Starts firefox browser
-  // Returns POST /session response,
-  // Which contains session id
+	// Returns POST /session response,
+	// Which contains session id
 	sc := session.New()
-  
-  // Assigns session id to the local struct
-  // For use in test steps
+	
+	// Assigns session id to the local struct
+	// For use in test steps
 	st := &SessionTest{
 		Id: sc.Id,
 	}
-  
-  // Closes created gecko session
-  // After the test
+	
+	// Closes created gecko session
+	// After the test
 	defer st.CloseSession(t)
 
 	// Test steps
