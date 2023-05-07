@@ -1,8 +1,6 @@
 package config
 
 import (
-	"log"
-
 	"github.com/mcsymiv/go-gecko/models"
 )
 
@@ -12,11 +10,6 @@ const DriverUrl = "http://localhost:4444"
 // Global config struct
 type SessionConfig struct {
 	Id string
-}
-
-type LogginConfig struct {
-	InfoLog  *log.Logger
-	ErrorLog *log.Logger
 }
 
 type RemoteResponse struct {
@@ -29,11 +22,27 @@ type Value struct {
 }
 
 // Functional Options for gecko remote Capabilities
+// Usage:
+//
+// For the capabilities set with argument:
+//
+//	func browserName(s string) CapabilitiesFunc {
+//	 return func(cap *models.Capabilities) {
+//	   cap.BrowserName = s
+//	 }
+//	}
+//
+// For the capabilities:
+//
+//	func acceptInsecure(cap *models.Capabilities) {
+//	  cap.AcceptInsecureCerts = false
+//	}
+//
+// Example:
+// Create session.New(browserName("chrome")
 type CapabilitiesFunc func(*models.Capabilities)
 
 // DefaultCapabilities
-// Sets default Capabilities for session
-// If none is provided in session.New
 func DefaultCapabilities() models.Capabilities {
 	return models.Capabilities{
 		AlwaysMatch: models.AlwaysMatch{

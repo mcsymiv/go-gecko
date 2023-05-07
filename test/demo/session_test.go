@@ -18,16 +18,15 @@ type SessionTest struct {
 func TestSession(t *testing.T) {
 
 	// Starts firefox browser
-	// Sets new session id to SessionRepo
 	sc := session.New()
 	st := &SessionTest{
 		Id: sc.Id,
 	}
+	defer st.CloseSession(t)
 
 	// test steps
 	st.GetSessionStatus(t)
 	st.OpenUrl(t)
-	st.CloseSession(t)
 }
 
 // TestGetStatus

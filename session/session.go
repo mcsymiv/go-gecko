@@ -8,6 +8,9 @@ import (
 	"github.com/mcsymiv/go-gecko/request"
 )
 
+// Creates new gecko remote session
+// Accepts config.CapabilitiesFunc
+// If none provided sets defaults
 func New(capsFn ...config.CapabilitiesFunc) *config.SessionConfig {
 
 	c := config.DefaultCapabilities()
