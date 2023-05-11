@@ -2,9 +2,9 @@ package demo
 
 import (
 	"fmt"
+	"net/http"
 	"testing"
 
-	"github.com/mcsymiv/go-gecko/config"
 	"github.com/mcsymiv/go-gecko/request"
 	"github.com/mcsymiv/go-gecko/session"
 )
@@ -32,7 +32,7 @@ func TestSession(t *testing.T) {
 // TestGetStatus
 // Prints info on remote to stdout
 func (st *SessionTest) GetSessionStatus(t *testing.T) {
-	rr, _ := request.Do("get", fmt.Sprintf("%s%s", config.DriverUrl, "/status"), nil)
+	rr, _ := request.Do(http.MethodGet, request.Url(request.Status), nil)
 
 	if string(rr) == "" {
 		t.Errorf("Session status error")
@@ -44,13 +44,13 @@ func (st *SessionTest) GetSessionStatus(t *testing.T) {
 func (st *SessionTest) OpenUrl(t *testing.T) {
 	url := []byte(`{"url": "https://google.com"}`)
 
-	_, _ = request.Do("post", fmt.Sprintf("%s/session/%s/url", config.DriverUrl, st.Id), url)
-	rr, _ := request.Do("get", fmt.Sprintf("%s/session/%s/url", config.DriverUrl, st.Id), url)
+	_, _ = request.Do(http.MethodPost, request.UrlArgs(request.Session, st.Id, request.UrlPath), url)
+	rr, _ := request.Do(http.MethodGet, request.UrlArgs(request.Session, st.Id, request.UrlPath), url)
 
 	fmt.Println(string(rr))
 }
 
 // CloseSession
 func (st *SessionTest) CloseSession(t *testing.T) {
-	request.Do("delete", fmt.Sprintf("%s%s/%s", config.DriverUrl, "/session", st.Id), nil)
+	request.Do(http.MethodDelete, request.UrlArgs(request.Session, st.Id), nil)
 }

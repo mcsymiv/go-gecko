@@ -4,9 +4,6 @@ import (
 	"github.com/mcsymiv/go-gecko/models"
 )
 
-const DriverUrl = "http://localhost:4444"
-
-// SessionConfig
 // Global config struct
 type SessionConfig struct {
 	Id string

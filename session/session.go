@@ -3,6 +3,7 @@ package session
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/mcsymiv/go-gecko/config"
 	"github.com/mcsymiv/go-gecko/request"
@@ -24,7 +25,7 @@ func New(capsFn ...config.CapabilitiesFunc) *config.SessionConfig {
 		fmt.Println(err)
 	}
 
-	rr, err := request.Do("POST", fmt.Sprintf("%s%s", config.DriverUrl, "/session"), data)
+	rr, err := request.Do(http.MethodPost, request.Url(request.Session), data)
 	if err != nil {
 		fmt.Println(err)
 	}
