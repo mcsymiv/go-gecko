@@ -32,7 +32,7 @@ func TestFindElement(t *testing.T) {
 }
 
 func (st *SessionTest) FindElement(t *testing.T) {
-	element.Find(st.Id)
+	element.Find(element.ByCSSSelector, "#APjFqb", st.Id)
 }
 
 // TestGetStatus
@@ -43,6 +43,7 @@ func (st *SessionTest) GetSessionStatus(t *testing.T) {
 	if string(rr) == "" {
 		t.Errorf("Session status error")
 	}
+	fmt.Println(string(rr))
 }
 
 // OpenUrl

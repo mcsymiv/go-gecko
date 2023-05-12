@@ -10,6 +10,7 @@ const (
 	Session = "session"
 	Status  = "status"
 	UrlPath = "url"
+	Element = "element"
 )
 
 func Url(arg string) string {

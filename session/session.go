@@ -9,6 +9,10 @@ import (
 	"github.com/mcsymiv/go-gecko/request"
 )
 
+type WebDriver interface {
+	Status() (int, error)
+}
+
 // Creates new gecko remote session
 // Accepts config.CapabilitiesFunc
 // If none provided sets defaults

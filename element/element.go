@@ -19,10 +19,10 @@ const (
 	ByCSSSelector     = "css selector"
 )
 
-func Find(sid string) {
+func Find(by, value, sid string) {
 	params := map[string]string{
-		"using": ByCSSSelector,
-		"value": "#APjFqb",
+		"using": by,
+		"value": value,
 	}
 
 	data, err := json.Marshal(params)
@@ -30,7 +30,9 @@ func Find(sid string) {
 		fmt.Println("Find element error marshal", err)
 	}
 
-	url := fmt.Sprintf("%s/session/%s/element", request.BaseUrl, sid)
+	//url := fmt.Sprintf("%s/session/%s/element", request.BaseUrl, sid)
+	url := request.UrlArgs(request.Session, sid, request.Element)
+	fmt.Println("FIND ELEMENT", url)
 	rr, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		fmt.Println("Find element request error", err)
