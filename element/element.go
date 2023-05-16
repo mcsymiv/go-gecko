@@ -1,22 +1,16 @@
 package element
 
-const (
-	ByID              = "id"
-	ByXPATH           = "xpath"
-	ByLinkText        = "link text"
-	ByPartialLinkText = "partial link text"
-	ByName            = "name"
-	ByTagName         = "tag name"
-	ByClassName       = "class name"
-	ByCSSSelector     = "css selector"
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/mcsymiv/go-gecko/request"
 )
 
-type WebElement interface {
-	// Click() error
-	// SendKeys(keys string) error
+func (e *Element) Click() {
+	url := request.UrlArgs(request.Session, e.SessionId, request.Element, e.Id, request.Click)
+	_, err := request.Do(http.MethodPost, url, nil)
+	if err != nil {
+		fmt.Println("Error on click", err)
+	}
 }
-
-type Element struct {
-}
-
-

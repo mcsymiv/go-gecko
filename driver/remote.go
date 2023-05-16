@@ -9,8 +9,8 @@ import (
 	"github.com/mcsymiv/go-gecko/request"
 )
 
-// Status
-func (d *Driver) Status() {
+// GetStatus
+func GetStatus() {
 	rr, err := request.Do(http.MethodGet, request.Url(request.Status), nil)
 	if err != nil {
 		fmt.Println("Status request error", err)
@@ -53,39 +53,35 @@ func (d *Driver) Quit() {
 	request.Do(http.MethodDelete, request.UrlArgs(request.Session, d.Id), nil)
 }
 
-//- func elementIDFromValue(v map[string]string) string {
-//-	for _, key := range []string{webElementIdentifier, legacyWebElementIdentifier} {
-//-		v, ok := v[key]
-//-		if !ok || v == "" {
-//-			continue
-//-		}
-//-		return v
-//-	}
-//-	return ""
-//- }
-
+// FindElement
+// Finds single element by specifying selector strategy and its value
+// Uses Selenium 3 protocol UUID-based string constant
 func (d *Driver) FindElement(by, value string) element.WebElement {
-	// element.Find(element.ByCSSSelector, "#APjFqb", d.Id)
-	params := map[string]string{
-		"using": by,
-		"value": value,
+	p := &element.FindUsing{
+		Using: by,
+		Value: value,
 	}
 
-	data, err := json.Marshal(params)
+	data, err := json.Marshal(p)
 	if err != nil {
 		fmt.Println("Find element error marshal", err)
 	}
 
 	url := request.UrlArgs(request.Session, d.Id, request.Element)
-	_, err = request.Do(http.MethodPost, url, data)
+	el, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		fmt.Println("Find element request error", err)
 	}
 
 	res := new(struct{ Value map[string]string })
-	if err := json.Unmarshal(data, &res); err != nil {
+	if err := json.Unmarshal(el, &res); err != nil {
 		fmt.Println("Find element unmarshal error", err)
 	}
 
-	return &element.Element{}
+	id := elementID(res.Value)
+
+	return &element.Element{
+		SessionId: d.Id,
+		Id:        id,
+	}
 }

@@ -11,6 +11,7 @@ const (
 	Status  = "status"
 	UrlPath = "url"
 	Element = "element"
+	Click   = "click"
 )
 
 func Url(arg string) string {
