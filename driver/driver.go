@@ -31,15 +31,20 @@ func (d *Driver) Status() {
 // Open
 // Goes to url
 func (d *Driver) Open(u string) {
-	url := []byte(`{"url": "https://google.com"}`)
-	// url := []byte(`{"url": u}`)
+	url := map[string]string{
+		"url": u,
+	}
+	param, err := json.Marshal(url)
+	if err != nil {
+		fmt.Println("Url marshal error", err)
+	}
 
-	_, err := request.Do(http.MethodPost, request.UrlArgs(request.Session, d.Id, request.UrlPath), url)
+	_, err = request.Do(http.MethodPost, request.UrlArgs(request.Session, d.Id, request.UrlPath), param)
 	if err != nil {
 		fmt.Println("Open url POST Error", err)
 	}
 
-	rr, err := request.Do(http.MethodGet, request.UrlArgs(request.Session, d.Id, request.UrlPath), url)
+	rr, err := request.Do(http.MethodGet, request.UrlArgs(request.Session, d.Id, request.UrlPath), param)
 	if err != nil {
 		fmt.Println("Open url GET Error", err)
 	}
