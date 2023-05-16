@@ -11,8 +11,9 @@ func TestDriver(t *testing.T) {
 
 	// Starts firefox browser
 	s := driver.New()
-	defer s.Quit()
+	// defer s.Quit()
 	s.Open("https://www.google.com")
 	el := s.FindElement(element.ByCssSelector, "#APjFqb")
 	el.Click()
+	el.SendKeys("hello")
 }

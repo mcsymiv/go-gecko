@@ -1,6 +1,6 @@
 package path
 
-import  (
+import (
 	"fmt"
 	"strings"
 )
@@ -12,6 +12,7 @@ const (
 	UrlPath = "url"
 	Element = "element"
 	Click   = "click"
+	Value   = "value"
 )
 
 func Url(arg string) string {
