@@ -1,6 +1,6 @@
-package request
+package path
 
-import (
+import  (
 	"fmt"
 	"strings"
 )

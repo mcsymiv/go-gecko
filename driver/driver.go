@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/mcsymiv/go-gecko/config"
+	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
 )
 
@@ -22,7 +23,7 @@ func New(capsFn ...config.CapabilitiesFunc) WebDriver {
 		fmt.Println(err)
 	}
 
-	rr, err := request.Do(http.MethodPost, request.Url(request.Session), data)
+	rr, err := request.Do(http.MethodPost, path.Url(path.Session), data)
 	if err != nil {
 		fmt.Println(err)
 	}

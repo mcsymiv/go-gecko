@@ -6,12 +6,13 @@ import (
 	"net/http"
 
 	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
 )
 
 // GetStatus
 func GetStatus() {
-	rr, err := request.Do(http.MethodGet, request.Url(request.Status), nil)
+	rr, err := request.Do(http.MethodGet, path.Url(path.Status), nil)
 	if err != nil {
 		fmt.Println("Status request error", err)
 	}
@@ -35,12 +36,12 @@ func (d *Driver) Open(u string) {
 		fmt.Println("Url marshal error", err)
 	}
 
-	_, err = request.Do(http.MethodPost, request.UrlArgs(request.Session, d.Id, request.UrlPath), param)
+	_, err = request.Do(http.MethodPost, path.UrlArgs(path.Session, d.Id, path.UrlPath), param)
 	if err != nil {
 		fmt.Println("Open url POST Error", err)
 	}
 
-	rr, err := request.Do(http.MethodGet, request.UrlArgs(request.Session, d.Id, request.UrlPath), param)
+	rr, err := request.Do(http.MethodGet, path.UrlArgs(path.Session, d.Id, path.UrlPath), param)
 	if err != nil {
 		fmt.Println("Open url GET Error", err)
 	}
@@ -50,7 +51,7 @@ func (d *Driver) Open(u string) {
 
 // Closes session
 func (d *Driver) Quit() {
-	request.Do(http.MethodDelete, request.UrlArgs(request.Session, d.Id), nil)
+	request.Do(http.MethodDelete, path.UrlArgs(path.Session, d.Id), nil)
 }
 
 // FindElement
@@ -67,7 +68,7 @@ func (d *Driver) FindElement(by, value string) element.WebElement {
 		fmt.Println("Find element error marshal", err)
 	}
 
-	url := request.UrlArgs(request.Session, d.Id, request.Element)
+	url := path.UrlArgs(path.Session, d.Id, path.Element)
 	el, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		fmt.Println("Find element request error", err)
