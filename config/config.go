@@ -4,20 +4,6 @@ import (
 	"github.com/mcsymiv/go-gecko/models"
 )
 
-// Global config struct
-type SessionConfig struct {
-	Id string
-}
-
-type RemoteResponse struct {
-	Value Value
-}
-
-type Value struct {
-	SessionId    string                 `json:"sessionId"`
-	Capabilities map[string]interface{} `json:"-"`
-}
-
 // Functional Options for gecko remote Capabilities
 // Usage:
 //

@@ -28,7 +28,7 @@ func New(capsFn ...config.CapabilitiesFunc) WebDriver {
 		fmt.Println(err)
 	}
 
-	var res config.RemoteResponse
+	var res RemoteResponse
 
 	err = json.Unmarshal(rr, &res)
 	if err != nil {
