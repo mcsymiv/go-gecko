@@ -8,32 +8,32 @@ In order to start test, ex. TestSession. Fire up gecko driver:
 Here, driver is started and listening on `http://localhost:4444`.  
 Aftet that, run the test:
 ```
-go test -v -count=1 test/demo/session_test.go -run TestSession
+go test -v -count=1 test/driver/driver_test.go -run TestDriver
 ```
 `-v`, shows test output in verbose mode  
 `-count=1`, discards test cache  
-`test/demo/session_test.go`, specifies test directory  
+`test/driver/driver_test.go`, specifies test directory  
 `-run`, pattern for test name  
   
 ```
-func TestSession(t *testing.T) {
-	// Starts firefox browser
-	// Returns POST /session response,
-	// Which contains session id
-	sc := session.New()
-	
-	// Assigns session id to the local struct
-	// For use in test steps
-	st := &SessionTest{
-		Id: sc.Id,
-	}
-	
-	// Closes created gecko session
-	// After the test
-	defer st.CloseSession(t)
+func TestDriver(t *testing.T) {
 
-	// Test steps
-	st.GetSessionStatus(t)
-	st.OpenUrl(t)
+	// Starts firefox browser
+	s := driver.New()
+	
+	// Closes current session
+	defer s.Quit()
+	
+	// Goes to the page
+	s.Open("https://www.google.com")
+	
+	// Finds and returns an webelement
+	el := s.FindElement(element.ByCssSelector, "#APjFqb")
+	
+	// Yep
+	el.Click()
+	
+	// Sends text to the element, in this case it's is a google search input
+	el.SendKeys("hello")
 }
 ```
