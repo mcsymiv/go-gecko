@@ -5,18 +5,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/mcsymiv/go-gecko/config"
 	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
 )
 
-func New(capsFn ...config.CapabilitiesFunc) WebDriver {
+func New(capsFn ...CapabilitiesFunc) WebDriver {
 
-	c := config.DefaultCapabilities()
+	c := DefaultCapabilities()
 	for _, capFn := range capsFn {
 		capFn(&c)
 	}
-	fmt.Printf("%+v", c)
 
 	data, err := json.Marshal(c)
 	if err != nil {
@@ -28,7 +26,8 @@ func New(capsFn ...config.CapabilitiesFunc) WebDriver {
 		fmt.Println(err)
 	}
 
-	var res RemoteResponse
+	// var res RemoteResponse
+	res := struct{ Value NewSessionResponse }{}
 
 	err = json.Unmarshal(rr, &res)
 	if err != nil {
@@ -37,5 +36,36 @@ func New(capsFn ...config.CapabilitiesFunc) WebDriver {
 
 	return &Driver{
 		Id: res.Value.SessionId,
+	}
+}
+
+// Functional Options for gecko remote Capabilities
+// Usage:
+//
+// For the capabilities set with argument:
+//
+//	func browserName(s string) CapabilitiesFunc {
+//	 return func(cap *models.Capabilities) {
+//	   cap.BrowserName = s
+//	 }
+//	}
+//
+// For the capabilities:
+//
+//	func acceptInsecure(cap *models.Capabilities) {
+//	  cap.AcceptInsecureCerts = false
+//	}
+//
+// Example:
+// Create session.New(browserName("chrome")
+type CapabilitiesFunc func(*Capabilities)
+
+// DefaultCapabilities
+func DefaultCapabilities() Capabilities {
+	return Capabilities{
+		AlwaysMatch: AlwaysMatch{
+			AcceptInsecureCerts: true,
+			BrowserName:         "firefox",
+		},
 	}
 }

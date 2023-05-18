@@ -13,6 +13,9 @@ const (
 	Element = "element"
 	Click   = "click"
 	Value   = "value"
+
+	// Element
+	Attribute = "attribute"
 )
 
 func Url(arg string) string {

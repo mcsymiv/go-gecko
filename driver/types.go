@@ -22,15 +22,16 @@ type Status struct {
 	Ready   bool   `json:"ready"`
 }
 
-type StatusResponse struct {
-	Value Status
-}
-
-type RemoteResponse struct {
-	Value Value
-}
-
-type Value struct {
+type NewSessionResponse struct {
 	SessionId    string                 `json:"sessionId"`
 	Capabilities map[string]interface{} `json:"-"`
+}
+
+type Capabilities struct {
+	AlwaysMatch
+}
+
+type AlwaysMatch struct {
+	AcceptInsecureCerts bool
+	BrowserName         string
 }

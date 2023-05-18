@@ -36,3 +36,16 @@ func (e *Element) SendKeys(s string) {
 		fmt.Println("Error on click", err)
 	}
 }
+
+// GetAttribute
+func (e *Element) GetAttribute(a string) {
+	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Attribute, a)
+	r, err := request.Do(http.MethodGet, url, nil)
+	if err != nil {
+		fmt.Println("Get attribute error", err)
+	}
+
+	fmt.Println(string(r))
+
+	// d, err := json.Marshal(r)
+}

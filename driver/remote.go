@@ -17,7 +17,7 @@ func GetStatus() {
 		fmt.Println("Status request error", err)
 	}
 
-	reply := &StatusResponse{}
+	reply := new(struct{ Value Status })
 	if err := json.Unmarshal(rr, reply); err != nil {
 		fmt.Println("Status unmarshal error", err)
 	}
