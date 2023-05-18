@@ -2,7 +2,6 @@ package driver
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -30,26 +29,37 @@ func (d *Driver) GetStatus() (*Status, error) {
 
 // Open
 // Goes to url
-func (d *Driver) Open(u string) {
+func (d *Driver) Open(u string) (string, error) {
 	url := map[string]string{
 		"url": u,
 	}
 	param, err := json.Marshal(url)
 	if err != nil {
-		fmt.Println("Url marshal error", err)
+		log.Println("Url marshal error", err)
+		return "", err
 	}
 
+	// POST /url method returns null as value
 	_, err = request.Do(http.MethodPost, path.UrlArgs(path.Session, d.Id, path.UrlPath), param)
 	if err != nil {
-		fmt.Println("Open url POST Error", err)
+		log.Println("Open url POST Error", err)
+		return "", err
 	}
 
-	rr, err := request.Do(http.MethodGet, path.UrlArgs(path.Session, d.Id, path.UrlPath), param)
+	r, err := request.Do(http.MethodGet, path.UrlArgs(path.Session, d.Id, path.UrlPath), param)
 	if err != nil {
-		fmt.Println("Open url GET Error", err)
+		log.Printf("Open url GET error: %+v", err)
+		return "", err
 	}
 
-	fmt.Println(string(rr))
+	ur := new(struct{ Value string })
+	err = json.Unmarshal(r, ur)
+	if err != nil {
+		log.Printf("Url GET error: %+v", err)
+		return "", err
+	}
+
+	return ur.Value, nil
 }
 
 // Closes session
@@ -60,7 +70,7 @@ func (d *Driver) Quit() {
 // FindElement
 // Finds single element by specifying selector strategy and its value
 // Uses Selenium 3 protocol UUID-based string constant
-func (d *Driver) FindElement(by, value string) element.WebElement {
+func (d *Driver) FindElement(by, value string) (element.WebElement, error) {
 	p := &element.FindUsing{
 		Using: by,
 		Value: value,
@@ -68,18 +78,21 @@ func (d *Driver) FindElement(by, value string) element.WebElement {
 
 	data, err := json.Marshal(p)
 	if err != nil {
-		fmt.Println("Find element error marshal", err)
+		log.Printf("Find element marshal: %+v", err)
+		return nil, err
 	}
 
 	url := path.UrlArgs(path.Session, d.Id, path.Element)
 	el, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
-		fmt.Println("Find element request error", err)
+		log.Printf("Find element request: %+v", err)
+		return nil, err
 	}
 
 	res := new(struct{ Value map[string]string })
 	if err := json.Unmarshal(el, &res); err != nil {
-		fmt.Println("Find element unmarshal error", err)
+		log.Printf("Find element unmarshal: %+v", err)
+		return nil, err
 	}
 
 	id := elementID(res.Value)
@@ -87,5 +100,5 @@ func (d *Driver) FindElement(by, value string) element.WebElement {
 	return &element.Element{
 		SessionId: d.Id,
 		Id:        id,
-	}
+	}, nil
 }

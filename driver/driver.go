@@ -2,7 +2,6 @@ package driver
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -12,7 +11,7 @@ import (
 
 // New
 // Connect to the WebDriver instance running locally
-func New(capsFn ...CapabilitiesFunc) WebDriver {
+func New(capsFn ...CapabilitiesFunc) (WebDriver, error) {
 
 	c := DefaultCapabilities()
 	for _, capFn := range capsFn {
@@ -20,27 +19,27 @@ func New(capsFn ...CapabilitiesFunc) WebDriver {
 	}
 
 	data, err := json.Marshal(c)
-	log.Println(string(data))
 	if err != nil {
-		fmt.Println(err)
+		log.Println("Marshal capabilities error", err)
+		return nil, err
 	}
 
-	rr, err := request.Do(http.MethodPost, path.Url(path.Session), data)
+	r, err := request.Do(http.MethodPost, path.Url(path.Session), data)
 	if err != nil {
-		fmt.Println(err)
+		log.Println("Connect to driver instance with capabilities error", err)
+		return nil, err
 	}
 
-	// var res RemoteResponse
 	res := new(struct{ Value NewSessionResponse })
-
-	err = json.Unmarshal(rr, &res)
+	err = json.Unmarshal(r, &res)
 	if err != nil {
-		fmt.Println("error:", err)
+		log.Println("Unmarshal capabilities error", err)
+		return nil, err
 	}
 
 	return &Driver{
 		Id: res.Value.SessionId,
-	}
+	}, nil
 }
 
 // Functional Options for gecko remote Capabilities

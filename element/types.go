@@ -12,9 +12,9 @@ const (
 )
 
 type WebElement interface {
-	Click()
-	SendKeys(keys string)
-	GetAttribute(attr string)
+	Click() error
+	SendKeys(keys string) error
+	GetAttribute(attr string) (string, error)
 }
 
 type Element struct {

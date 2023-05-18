@@ -1,7 +1,6 @@
 package driver
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/mcsymiv/go-gecko/driver"
@@ -10,15 +9,33 @@ import (
 
 func TestDriver(t *testing.T) {
 
-	// Starts firefox browser
-	s := driver.New()
+	s, err := driver.New()
+	if err != nil {
+		t.Errorf("Creating new driver session: %+v", err)
+	}
 	defer s.Quit()
-	stat, _ := s.GetStatus()
-	fmt.Println(stat)
-	s.Open("https://www.google.com")
-	el := s.FindElement(element.ByCssSelector, "#APjFqb")
+
+	_, err = s.GetStatus()
+	if err != nil {
+		t.Errorf("Status driver: %+v", err)
+	}
+
+	_, err = s.Open("https://www.google.com")
+	if err != nil {
+		t.Errorf("Url: %+v", err)
+	}
+
+	el, err := s.FindElement(element.ByCssSelector, "#APjFqb")
+	if err != nil {
+		t.Errorf("Element not found: %+v", err)
+	}
+
 	el.Click()
-	el.GetAttribute("value")
+
+	attr, err := el.GetAttribute("id")
+	if err != nil && attr == "" {
+		t.Errorf("No attribute: %+v", err)
+	}
+
 	el.SendKeys("hello")
-	el.GetAttribute("value")
 }

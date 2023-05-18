@@ -6,10 +6,10 @@ import (
 
 type WebDriver interface {
 	GetStatus() (*Status, error)
-	Open(u string)
+	Open(u string) (string, error)
 	Quit()
 
-	FindElement(b, v string) element.WebElement
+	FindElement(b, v string) (element.WebElement, error)
 }
 
 type Driver struct {

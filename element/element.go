@@ -2,7 +2,7 @@ package element
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/mcsymiv/go-gecko/path"
@@ -10,42 +10,54 @@ import (
 )
 
 // Click
-func (e *Element) Click() {
+func (e *Element) Click() error {
 	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Click)
 	_, err := request.Do(http.MethodPost, url, nil)
 	if err != nil {
-		fmt.Println("Error on click", err)
+		log.Println("Error on click", err)
+		return err
 	}
+
+	return nil
 }
 
 // SendKeys
-func (e *Element) SendKeys(s string) {
+func (e *Element) SendKeys(s string) error {
 	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Value)
 	k := &SendKeys{
 		Text: s,
 	}
 
 	data, err := json.Marshal(k)
-	fmt.Println(string(data))
 	if err != nil {
-		fmt.Println("Send keys on marshal error", err)
+		log.Printf("Send keys on marshal: %+v", err)
+		return err
 	}
 
 	_, err = request.Do(http.MethodPost, url, data)
 	if err != nil {
-		fmt.Println("Error on click", err)
+		log.Printf("Click: %+v", err)
+		return err
 	}
+
+	return nil
 }
 
 // GetAttribute
-func (e *Element) GetAttribute(a string) {
+func (e *Element) GetAttribute(a string) (string, error) {
 	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Attribute, a)
 	r, err := request.Do(http.MethodGet, url, nil)
 	if err != nil {
-		fmt.Println("Get attribute error", err)
+		log.Printf("Get attribute: %+v", err)
+		return "", err
 	}
 
-	fmt.Println(string(r))
+	attr := new(struct{ Value string })
+	err = json.Unmarshal(r, attr)
+	if err != nil {
+		log.Printf("Marshal attribute: %+v", err)
+		return "", nil
+	}
 
-	// d, err := json.Marshal(r)
+	return attr.Value, nil
 }
