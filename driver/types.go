@@ -27,11 +27,15 @@ type NewSessionResponse struct {
 	Capabilities map[string]interface{} `json:"-"`
 }
 
+type NewSessionCapabilities struct {
+	Capabilities `json:"capabilities"`
+}
+
 type Capabilities struct {
-	AlwaysMatch
+	AlwaysMatch `json:"alwaysMatch"`
 }
 
 type AlwaysMatch struct {
-	AcceptInsecureCerts bool
-	BrowserName         string
+	AcceptInsecureCerts bool   `json:"acceptInsecureCerts"`
+	BrowserName         string `json:"browserName"`
 }

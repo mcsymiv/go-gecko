@@ -3,12 +3,15 @@ package driver
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
 )
 
+// New
+// Connect to the WebDriver instance running locally
 func New(capsFn ...CapabilitiesFunc) WebDriver {
 
 	c := DefaultCapabilities()
@@ -17,6 +20,7 @@ func New(capsFn ...CapabilitiesFunc) WebDriver {
 	}
 
 	data, err := json.Marshal(c)
+	log.Println(string(data))
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -27,7 +31,7 @@ func New(capsFn ...CapabilitiesFunc) WebDriver {
 	}
 
 	// var res RemoteResponse
-	res := struct{ Value NewSessionResponse }{}
+	res := new(struct{ Value NewSessionResponse })
 
 	err = json.Unmarshal(rr, &res)
 	if err != nil {
@@ -58,14 +62,16 @@ func New(capsFn ...CapabilitiesFunc) WebDriver {
 //
 // Example:
 // Create session.New(browserName("chrome")
-type CapabilitiesFunc func(*Capabilities)
+type CapabilitiesFunc func(*NewSessionCapabilities)
 
 // DefaultCapabilities
-func DefaultCapabilities() Capabilities {
-	return Capabilities{
-		AlwaysMatch: AlwaysMatch{
-			AcceptInsecureCerts: true,
-			BrowserName:         "firefox",
+func DefaultCapabilities() NewSessionCapabilities {
+	return NewSessionCapabilities{
+		Capabilities{
+			AlwaysMatch{
+				AcceptInsecureCerts: true,
+				BrowserName:         "firefox",
+			},
 		},
 	}
 }
