@@ -3,6 +3,7 @@ package driver
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/mcsymiv/go-gecko/element"
@@ -11,18 +12,20 @@ import (
 )
 
 // GetStatus
-func GetStatus() {
+func (d *Driver) GetStatus() (*Status, error) {
 	rr, err := request.Do(http.MethodGet, path.Url(path.Status), nil)
 	if err != nil {
-		fmt.Println("Status request error", err)
+		log.Println("Status request error", err)
+		return nil, err
 	}
 
 	reply := new(struct{ Value Status })
 	if err := json.Unmarshal(rr, reply); err != nil {
-		fmt.Println("Status unmarshal error", err)
+		log.Println("Status unmarshal error", err)
+		return &reply.Value, err
 	}
 
-	fmt.Println(reply)
+	return &reply.Value, nil
 }
 
 // Open

@@ -1,6 +1,7 @@
 package driver
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/mcsymiv/go-gecko/driver"
@@ -12,7 +13,8 @@ func TestDriver(t *testing.T) {
 	// Starts firefox browser
 	s := driver.New()
 	defer s.Quit()
-	driver.GetStatus()
+	stat, _ := s.GetStatus()
+	fmt.Println(stat)
 	s.Open("https://www.google.com")
 	el := s.FindElement(element.ByCssSelector, "#APjFqb")
 	el.Click()
