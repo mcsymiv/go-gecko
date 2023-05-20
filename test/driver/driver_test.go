@@ -1,6 +1,7 @@
 package driver
 
 import (
+	"log"
 	"testing"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
@@ -10,25 +11,18 @@ import (
 
 func TestDriver(t *testing.T) {
 
-	s, err := driver.New(
-		capabilities.ImplicitWait(3000),
-	)
+	d, err := driver.New(capabilities.ImplicitWait(3000))
 	if err != nil {
-		t.Errorf("Creating new driver session: %+v", err)
+		log.Fatal("session start err", err)
 	}
-	defer s.Quit()
+	defer d.Quit()
 
-	_, err = s.GetStatus()
-	if err != nil {
-		t.Errorf("Status driver: %+v", err)
-	}
-
-	_, err = s.Open("https://www.google.com")
+	_, err = d.Open("https://www.google.com")
 	if err != nil {
 		t.Errorf("Url: %+v", err)
 	}
 
-	el, err := s.FindElement(element.ByCssSelector, "#APjFqb")
+	el, err := d.FindElement(element.ByCssSelector, "#APjFqb")
 	if err != nil {
 		t.Errorf("Element not found: %+v", err)
 	}
@@ -36,9 +30,11 @@ func TestDriver(t *testing.T) {
 	el.Click()
 
 	attr, err := el.Attribute("id")
+
 	if err != nil && attr == "" {
 		t.Errorf("No attribute: %+v", err)
 	}
 
 	el.SendKeys("hello")
+	el.SendKeys(string("\ue007"))
 }

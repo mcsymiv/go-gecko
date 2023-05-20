@@ -17,7 +17,7 @@ package capabilities
 //	}
 //
 // Example:
-// Create session.New(browserName("chrome")
+// Create driver.New(browserName("chrome"))
 type CapabilitiesFunc func(*NewSessionCapabilities)
 
 // DefaultCapabilities
@@ -35,5 +35,11 @@ func DefaultCapabilities() NewSessionCapabilities {
 func ImplicitWait(w float32) CapabilitiesFunc {
 	return func(cap *NewSessionCapabilities) {
 		cap.Capabilities.AlwaysMatch.Timeouts.Implicit = w
+	}
+}
+
+func MozProfile(moz MozOptions) CapabilitiesFunc {
+	return func(cap *NewSessionCapabilities) {
+		cap.Capabilities.AlwaysMatch.MozOptions = moz
 	}
 }

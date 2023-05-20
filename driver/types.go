@@ -5,7 +5,7 @@ import (
 )
 
 type WebDriver interface {
-	GetStatus() (*Status, error)
+	// GetStatus() (*Status, error)
 	Open(u string) (string, error)
 	Quit()
 

@@ -11,7 +11,7 @@ import (
 )
 
 // GetStatus
-func (d *Driver) GetStatus() (*Status, error) {
+func GetStatus() (*Status, error) {
 	rr, err := request.Do(http.MethodGet, path.Url(path.Status), nil)
 	if err != nil {
 		log.Println("Status request error", err)
