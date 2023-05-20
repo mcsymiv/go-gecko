@@ -5,11 +5,15 @@ import (
 )
 
 type WebDriver interface {
-	GetStatus() (*Status, error)
+	// GetStatus() (*Status, error)
 	Open(u string) (string, error)
 	Quit()
 
 	FindElement(b, v string) (element.WebElement, error)
+}
+
+type BrowserCapabilities interface {
+	ImplilcitWait(w float32)
 }
 
 type Driver struct {
@@ -25,17 +29,4 @@ type Status struct {
 type NewSessionResponse struct {
 	SessionId    string                 `json:"sessionId"`
 	Capabilities map[string]interface{} `json:"-"`
-}
-
-type NewSessionCapabilities struct {
-	Capabilities `json:"capabilities"`
-}
-
-type Capabilities struct {
-	AlwaysMatch `json:"alwaysMatch"`
-}
-
-type AlwaysMatch struct {
-	AcceptInsecureCerts bool   `json:"acceptInsecureCerts"`
-	BrowserName         string `json:"browserName"`
 }

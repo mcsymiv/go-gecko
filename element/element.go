@@ -44,7 +44,7 @@ func (e *Element) SendKeys(s string) error {
 }
 
 // GetAttribute
-func (e *Element) GetAttribute(a string) (string, error) {
+func (e *Element) Attribute(a string) (string, error) {
 	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Attribute, a)
 	r, err := request.Do(http.MethodGet, url, nil)
 	if err != nil {

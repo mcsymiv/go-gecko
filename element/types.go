@@ -14,7 +14,7 @@ const (
 type WebElement interface {
 	Click() error
 	SendKeys(keys string) error
-	GetAttribute(attr string) (string, error)
+	Attribute(attr string) (string, error)
 }
 
 type Element struct {
