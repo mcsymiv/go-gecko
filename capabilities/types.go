@@ -13,9 +13,9 @@ type BrowserCapabilities struct {
 }
 
 type AlwaysMatch struct {
-	AcceptInsecureCerts bool   `json:"acceptInsecureCerts"`
-	BrowserName         string `json:"browserName"`
-	// Timeouts            Timeouts `json:"timeouts,omitempty,-"`
+	AcceptInsecureCerts bool     `json:"acceptInsecureCerts"`
+	BrowserName         string   `json:"browserName"`
+	Timeouts            Timeouts `json:"timeouts,omitempty,-"`
 }
 
 type Timeouts struct {

@@ -3,14 +3,16 @@ package driver
 import (
 	"testing"
 
+	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/element"
 )
 
 func TestDriver(t *testing.T) {
 
-	//caps := capabilities.ImplicitWait(3000)
-	s, err := driver.New()
+	s, err := driver.New(
+		capabilities.ImplicitWait(3000),
+	)
 	if err != nil {
 		t.Errorf("Creating new driver session: %+v", err)
 	}

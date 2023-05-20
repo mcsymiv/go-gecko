@@ -32,10 +32,8 @@ func DefaultCapabilities() NewSessionCapabilities {
 	}
 }
 
-/*
 func ImplicitWait(w float32) CapabilitiesFunc {
 	return func(cap *NewSessionCapabilities) {
 		cap.Capabilities.AlwaysMatch.Timeouts.Implicit = w
 	}
 }
-*/
