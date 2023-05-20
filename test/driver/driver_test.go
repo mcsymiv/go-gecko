@@ -9,6 +9,7 @@ import (
 
 func TestDriver(t *testing.T) {
 
+	//caps := capabilities.ImplicitWait(3000)
 	s, err := driver.New()
 	if err != nil {
 		t.Errorf("Creating new driver session: %+v", err)
@@ -32,7 +33,7 @@ func TestDriver(t *testing.T) {
 
 	el.Click()
 
-	attr, err := el.GetAttribute("id")
+	attr, err := el.Attribute("id")
 	if err != nil && attr == "" {
 		t.Errorf("No attribute: %+v", err)
 	}
