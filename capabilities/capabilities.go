@@ -38,8 +38,8 @@ func ImplicitWait(w float32) CapabilitiesFunc {
 	}
 }
 
-func MozProfile(moz MozOptions) CapabilitiesFunc {
+func Firefox(moz *MozOptions) CapabilitiesFunc {
 	return func(cap *NewSessionCapabilities) {
-		cap.Capabilities.AlwaysMatch.MozOptions = moz
+		cap.Capabilities.AlwaysMatch.MozOptions = *moz
 	}
 }
