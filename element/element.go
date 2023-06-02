@@ -12,9 +12,15 @@ import (
 // Click
 func (e *Element) Click() error {
 	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Click)
-	_, err := request.Do(http.MethodPost, url, nil)
+
+	data, err := json.Marshal(&Empty{})
 	if err != nil {
-		log.Println("Error on click", err)
+		log.Printf("Error on empty click marshal: %+v", err)
+	}
+
+	_, err = request.Do(http.MethodPost, url, data)
+	if err != nil {
+		log.Printf("Error on click: %+v", err)
 		return err
 	}
 

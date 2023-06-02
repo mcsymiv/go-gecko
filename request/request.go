@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -21,12 +22,15 @@ func Do(method, url string, data []byte) (json.RawMessage, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("Request: %s", url)
+	log.Printf("Response: %+v", string(body))
 
 	return body, nil
 }

@@ -26,6 +26,12 @@ type SendKeys struct {
 	Text string `json:"text"`
 }
 
+// Empty
+// Due to geckodriver bug: https://github.com/webdriverio/webdriverio/pull/3208
+// "where Geckodriver requires POST requests to have a valid JSON body"
+// Used in POST requests that don't require data to be passed by W3C
+type Empty struct{}
+
 type FindUsing struct {
 	Using string `json:"using"`
 	Value string `json:"value"`

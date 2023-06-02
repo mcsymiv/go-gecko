@@ -1,6 +1,8 @@
 package driver
 
-import "fmt"
+import (
+	"log"
+)
 
 const (
 	// legacyWebElementIdentifier is the string constant used in the old Selenium 2 protocol
@@ -17,7 +19,7 @@ const (
 func elementID(v map[string]string) string {
 	id, ok := v[webElementIdentifier]
 	if !ok || id == "" {
-		fmt.Println("Error on find element", v)
+		log.Println("Error on find element", v)
 	}
 	return id
 }
