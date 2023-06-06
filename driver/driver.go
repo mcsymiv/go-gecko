@@ -32,8 +32,6 @@ func New(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, error) {
 		return nil, err
 	}
 
-	log.Println("session res", string(r))
-
 	res := new(struct{ Value NewSessionResponse })
 	err = json.Unmarshal(r, &res)
 	if err != nil {

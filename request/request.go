@@ -29,8 +29,13 @@ func Do(method, url string, data []byte) (json.RawMessage, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	log.Printf("\n")
+	log.Printf("---------------------------------------------------------------------------")
 	log.Printf("Request: %s", url)
+	log.Printf("-----------------------------")
 	log.Printf("Response: %+v", string(body))
+	log.Printf("---------------------------------------------------------------------------")
 
 	return body, nil
 }

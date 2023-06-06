@@ -12,6 +12,7 @@ const (
 )
 
 type WebElement interface {
+	ElementId() (string, error)
 	Click() error
 	SendKeys(keys string) error
 	Attribute(attr string) (string, error)

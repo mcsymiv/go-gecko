@@ -2,6 +2,7 @@ package element
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -66,4 +67,12 @@ func (e *Element) Attribute(a string) (string, error) {
 	}
 
 	return attr.Value, nil
+}
+
+func (e *Element) ElementId() (string, error) {
+	if e.Id == "" {
+		return "", fmt.Errorf("No id for element: %+v", e)
+	}
+
+	return e.Id, nil
 }
