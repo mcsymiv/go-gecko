@@ -6,6 +6,11 @@ Run the test:
 ```
 go test -v -count=1 test/driver/*.go -run TestDriver
 ```
+`-v`, shows test output in verbose mode  
+`-count=1`, discards test cache  
+`test/driver/driver_test.go`, specifies test directory  
+`-run`, pattern for test name  
+  
 This command will start TestDriver with TestMain setup routine first.
 `TestMain`, starts Gecko driver for zsh, with default GeckoDriverPath  
 and will redirect driver stdout/stderr into `logs/gecko.session.logs` file.	
@@ -13,11 +18,7 @@ and will redirect driver stdout/stderr into `logs/gecko.session.logs` file.
 exec.Command("zsh", "-c", GeckoDriverPath, ">", "logs/gecko.session.logs", "2>&1", "&")
 ```
 
-`-v`, shows test output in verbose mode  
-`-count=1`, discards test cache  
-`test/driver/driver_test.go`, specifies test directory  
-`-run`, pattern for test name  
-  
+TestDriver  
 ```
 func TestDriver(t *testing.T) {
 
