@@ -18,9 +18,18 @@ type WebElement interface {
 	Attribute(attr string) (string, error)
 }
 
+type WebElements interface {
+	Elements() ([]WebElement, error)
+}
+
 type Element struct {
 	SessionId string
 	Id        string
+}
+
+type Elements struct {
+	SessionId string
+	Ids       []string
 }
 
 type SendKeys struct {

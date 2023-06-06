@@ -10,6 +10,7 @@ type WebDriver interface {
 	Quit()
 
 	FindElement(b, v string) (element.WebElement, error)
+	FindElements(b, v string) (element.WebElements, error)
 }
 
 type BrowserCapabilities interface {

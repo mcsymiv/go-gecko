@@ -23,3 +23,17 @@ func elementID(v map[string]string) string {
 	}
 	return id
 }
+
+func elementsID(v []map[string]string) []string {
+	var els []string
+
+	for _, el := range v {
+		id, ok := el[webElementIdentifier]
+		if !ok || id == "" {
+			log.Println("Error on find element", v)
+		}
+		els = append(els, id)
+	}
+
+	return els
+}

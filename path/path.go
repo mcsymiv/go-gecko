@@ -6,13 +6,14 @@ import (
 )
 
 const (
-	BaseUrl = "http://localhost:4444"
-	Session = "session"
-	Status  = "status"
-	UrlPath = "url"
-	Element = "element"
-	Click   = "click"
-	Value   = "value"
+	BaseUrl  = "http://localhost:4444"
+	Session  = "session"
+	Status   = "status"
+	UrlPath  = "url"
+	Element  = "element"
+	Elements = "elements"
+	Click    = "click"
+	Value    = "value"
 
 	// Element
 	Attribute = "attribute"

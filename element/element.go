@@ -76,3 +76,21 @@ func (e *Element) ElementId() (string, error) {
 
 	return e.Id, nil
 }
+
+// Elements
+func (els *Elements) Elements() ([]WebElement, error) {
+	var wels []WebElement
+
+	if len(els.Ids) == 0 {
+		return nil, fmt.Errorf("No element ids. Empty slice of web elements: %+v", els)
+	}
+
+	for _, el := range els.Ids {
+		wels = append(wels, &Element{
+			SessionId: els.SessionId,
+			Id:        el,
+		})
+	}
+
+	return wels, nil
+}

@@ -34,3 +34,29 @@ func TestFindElement(t *testing.T) {
 		t.Errorf("No element found: %s", id)
 	}
 }
+
+func TestFindElements(t *testing.T) {
+
+	caps := capabilities.ImplicitWait(3000)
+	d, err := driver.New(caps)
+	if err != nil {
+		log.Fatal("Create driver session", err)
+	}
+
+	defer d.Quit()
+
+	_, err = d.Open("https://the-internet.herokuapp.com/")
+	if err != nil {
+		log.Fatal("Open url", err)
+	}
+
+	els, err := d.FindElements(element.ByCssSelector, "#content li a")
+	if err != nil {
+		t.Errorf("Unable to find element: %+v", err)
+	}
+
+	wels, _ := els.Elements()
+	if len(wels) == 0 {
+		t.Errorf("No elements found: %+v", wels)
+	}
+}
