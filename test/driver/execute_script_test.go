@@ -6,6 +6,7 @@ import (
 
 	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/driver"
+	"github.com/mcsymiv/go-gecko/element"
 )
 
 func TestExecuteScriptSync(t *testing.T) {
@@ -22,11 +23,20 @@ func TestExecuteScriptSync(t *testing.T) {
 		t.Errorf("Failed open url: %+v", err)
 	}
 
-	err = d.ExecuteScriptSync("document.querySelector('#content li a').click()", nil)
+	err = d.ExecuteScriptSync("document.querySelector('#content li a').click()")
 	if err != nil {
 		t.Errorf("Failed script: %+v", err)
 	}
 
-	time.Sleep(3 * time.Second)
+	el, err := d.FindElement(element.ByLinkText, "Elemental Selenium")
+	if err != nil {
+		t.Errorf("Failed find el: %+v:", err)
+	}
 
+	err = d.ExecuteScriptSync("arguments[0].click()", el.ElementIdentifier())
+	if err != nil {
+		t.Errorf("Failed to pass el as arg: %+v", err)
+	}
+
+	time.Sleep(1 * time.Second)
 }

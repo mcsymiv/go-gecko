@@ -27,7 +27,7 @@ func (d *Driver) PageSource() (string, error) {
 }
 
 // ExecuteScriptSync
-func (d *Driver) ExecuteScriptSync(s string, args []interface{}) error {
+func (d *Driver) ExecuteScriptSync(s string, args ...interface{}) error {
 	if args == nil {
 		args = make([]interface{}, 0)
 	}
