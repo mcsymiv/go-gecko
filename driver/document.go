@@ -43,10 +43,10 @@ func (d *Driver) ExecuteScriptSync(s string, args []interface{}) error {
 		return err
 	}
 
-	page := new(struct{ Value interface{} })
-	err = json.Unmarshal(r, page)
-	if page.Value != nil || err != nil {
-		log.Println("Status unmarshal error", err, page.Value)
+	sr := new(struct{ Value interface{} })
+	err = json.Unmarshal(r, sr)
+	if sr.Value != nil || err != nil {
+		log.Println("Status unmarshal error", err, sr.Value)
 		return err
 	}
 
