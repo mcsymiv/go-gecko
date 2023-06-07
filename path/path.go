@@ -20,6 +20,8 @@ const (
 
 	// Document
 	PageSource = "source"
+	Execute    = "execute"
+	ScriptSync = "sync"
 )
 
 func Url(arg string) string {

@@ -8,6 +8,7 @@ import (
 	"github.com/mcsymiv/go-gecko/element"
 	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
+	"github.com/mcsymiv/go-gecko/selenium"
 )
 
 // GetStatus
@@ -119,7 +120,7 @@ func (d *Driver) FindElement(by, value string) (element.WebElement, error) {
 		return nil, err
 	}
 
-	id := elementID(res.Value)
+	id := selenium.ElementID(res.Value)
 
 	return &element.Element{
 		SessionId: d.Id,
@@ -152,7 +153,7 @@ func (d *Driver) FindElements(by, value string) (element.WebElements, error) {
 		return nil, err
 	}
 
-	els := elementsID(res.Value)
+	els := selenium.ElementsID(res.Value)
 	if els == nil {
 		log.Printf("No elements found. Empty slice. Elements ids: %+v", els)
 	}

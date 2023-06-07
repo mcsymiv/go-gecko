@@ -15,6 +15,7 @@ type WebDriver interface {
 	FindElements(b, v string) (element.WebElements, error)
 
 	// Document
+	ExecuteScriptSync(s string, args ...interface{}) error
 	PageSource() (string, error)
 }
 

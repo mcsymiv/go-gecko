@@ -25,3 +25,30 @@ func (d *Driver) PageSource() (string, error) {
 
 	return page.Value, err
 }
+
+// ExecuteScriptSync
+func (d *Driver) ExecuteScriptSync(s string, args ...interface{}) error {
+	if args == nil {
+		args = make([]interface{}, 0)
+	}
+
+	data, err := json.Marshal(map[string]interface{}{
+		"script": s,
+		"args":   args,
+	})
+
+	r, err := request.Do(http.MethodPost, path.UrlArgs(path.Session, d.Id, path.Execute, path.ScriptSync), data)
+	if err != nil {
+		log.Println("Status request error", err)
+		return err
+	}
+
+	sr := new(struct{ Value interface{} })
+	err = json.Unmarshal(r, sr)
+	if sr.Value != nil || err != nil {
+		log.Println("Status unmarshal error", err, sr.Value)
+		return err
+	}
+
+	return nil
+}

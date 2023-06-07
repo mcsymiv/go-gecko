@@ -8,6 +8,7 @@ import (
 
 	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
+	"github.com/mcsymiv/go-gecko/selenium"
 )
 
 // Click
@@ -75,6 +76,12 @@ func (e *Element) ElementId() (string, error) {
 	}
 
 	return e.Id, nil
+}
+
+func (e *Element) ElementIdentifier() map[string]string {
+	return map[string]string{
+		selenium.WebElementIdentifier: e.Id,
+	}
 }
 
 // Elements
