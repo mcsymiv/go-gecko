@@ -10,8 +10,12 @@ type WebDriver interface {
 	GetUrl() (string, error)
 	Quit()
 
+	// Elemnents
 	FindElement(b, v string) (element.WebElement, error)
 	FindElements(b, v string) (element.WebElements, error)
+
+	// Document
+	PageSource() (string, error)
 }
 
 type BrowserCapabilities interface {

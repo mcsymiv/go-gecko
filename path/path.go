@@ -17,6 +17,9 @@ const (
 
 	// Element
 	Attribute = "attribute"
+
+	// Document
+	PageSource = "source"
 )
 
 func Url(arg string) string {
