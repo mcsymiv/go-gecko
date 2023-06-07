@@ -2,7 +2,6 @@ package driver
 
 import (
 	"testing"
-	"time"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/driver"
@@ -37,6 +36,4 @@ func TestExecuteScriptSync(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to pass el as arg: %+v", err)
 	}
-
-	time.Sleep(1 * time.Second)
 }
