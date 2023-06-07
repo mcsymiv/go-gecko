@@ -29,5 +29,10 @@ func TestClick(t *testing.T) {
 
 	el.Click()
 
+	u, err := d.GetUrl()
+	if err != nil || u == "" {
+		t.Errorf("Unable to get URL: %+v", err)
+	}
+
 	time.Sleep(5 * time.Second)
 }

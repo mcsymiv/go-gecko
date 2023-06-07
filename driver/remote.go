@@ -11,6 +11,11 @@ import (
 )
 
 // GetStatus
+//
+// Status returns information about whether a remote end is
+// in a state in which it can create new sessions,
+// but may additionally include arbitrary meta information
+// that is specific to the implementation.
 func GetStatus() (*Status, error) {
 	rr, err := request.Do(http.MethodGet, path.Url(path.Status), nil)
 	if err != nil {
@@ -47,6 +52,25 @@ func (d *Driver) Open(u string) (string, error) {
 	}
 
 	r, err := request.Do(http.MethodGet, path.UrlArgs(path.Session, d.Id, path.UrlPath), param)
+	if err != nil {
+		log.Printf("Open url GET error: %+v", err)
+		return "", err
+	}
+
+	ur := new(struct{ Value string })
+	err = json.Unmarshal(r, ur)
+	if err != nil {
+		log.Printf("Url GET error: %+v", err)
+		return "", err
+	}
+
+	return ur.Value, nil
+}
+
+// GetUrl
+func (d *Driver) GetUrl() (string, error) {
+
+	r, err := request.Do(http.MethodGet, path.UrlArgs(path.Session, d.Id, path.UrlPath), nil)
 	if err != nil {
 		log.Printf("Open url GET error: %+v", err)
 		return "", err

@@ -1,6 +1,6 @@
 package driver
 
-// Special keyboard keys, for SendKeys.
+// Special keys, for SendKeys.
 const (
 	NullKey       = string('\ue000')
 	CancelKey     = string('\ue001')

@@ -7,6 +7,7 @@ import (
 type WebDriver interface {
 	// GetStatus() (*Status, error)
 	Open(u string) (string, error)
+	GetUrl() (string, error)
 	Quit()
 
 	FindElement(b, v string) (element.WebElement, error)
