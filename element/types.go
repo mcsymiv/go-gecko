@@ -16,7 +16,10 @@ type WebElement interface {
 	ElementIdentifier() map[string]string
 	Click() error
 	SendKeys(keys string) error
+
+	// State
 	Attribute(attr string) (string, error)
+	Text() (string, error)
 }
 
 type WebElements interface {

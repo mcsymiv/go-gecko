@@ -11,6 +11,7 @@ type WebDriver interface {
 	Quit()
 
 	// Elemnents
+	Init(b, v string) element.WebElement
 	FindElement(b, v string) (element.WebElement, error)
 	FindElements(b, v string) (element.WebElements, error)
 

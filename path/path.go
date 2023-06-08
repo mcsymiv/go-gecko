@@ -17,6 +17,7 @@ const (
 
 	// Element
 	Attribute = "attribute"
+	Text      = "text"
 
 	// Document
 	PageSource = "source"

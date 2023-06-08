@@ -82,3 +82,12 @@ func (d *Driver) FindElements(by, value string) (element.WebElements, error) {
 		Ids:       els,
 	}, nil
 }
+
+func (d *Driver) Init(by, val string) element.WebElement {
+	el, err := d.FindElement(by, val)
+	if err != nil {
+		log.Println("unable to find element", err, by, val)
+		return nil
+	}
+	return el
+}
