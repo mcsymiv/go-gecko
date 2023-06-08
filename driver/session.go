@@ -43,3 +43,30 @@ func New(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, error) {
 		Id: res.Value.SessionId,
 	}, nil
 }
+
+// GetStatus
+//
+// Status returns information about whether a remote end is
+// in a state in which it can create new sessions,
+// but may additionally include arbitrary meta information
+// that is specific to the implementation.
+func GetStatus() (*Status, error) {
+	rr, err := request.Do(http.MethodGet, path.Url(path.Status), nil)
+	if err != nil {
+		log.Println("Status request error", err)
+		return nil, err
+	}
+
+	reply := new(struct{ Value Status })
+	if err := json.Unmarshal(rr, reply); err != nil {
+		log.Println("Status unmarshal error", err)
+		return &reply.Value, err
+	}
+
+	return &reply.Value, nil
+}
+
+// Closes session
+func (d *Driver) Quit() {
+	request.Do(http.MethodDelete, path.UrlArgs(path.Session, d.Id), nil)
+}

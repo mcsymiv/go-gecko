@@ -14,6 +14,10 @@ const (
 	// webElementIdentifier is the string constant defined by the W3C Selenium 3 protocol
 	// specification that is the key for the map that contains a unique element identifier.
 	WebElementIdentifier = "element-6066-11e4-a52e-4f735466cecf"
+
+	// A shadow root is an abstraction used to identify a shadow root when
+	// it is transported via the protocol, between remote and local ends.
+	ShadonwRootIdentifier = "shadow-6066-11e4-a52e-4f735466cecf"
 )
 
 func ElementID(v map[string]string) string {
