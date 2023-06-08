@@ -35,3 +35,17 @@ func TestDriver(t *testing.T) {
 	}
 }
 ```
+There are other tests and w3c options you can explore:
+```
+.
+├── capabilities_test.go
+├── click_element_test.go
+├── driver_test.go
+├── element_attr_test.go
+├── execute_script_test.go
+├── find_element_test.go
+├── open_url_test.go
+├── page_source_test.go
+├── send_keys_test.go
+└── setup_test.go
+```
