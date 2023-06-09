@@ -29,7 +29,7 @@ func TestElementAttribute(t *testing.T) {
 
 	attr := el.Attribute("href")
 	if attr == "" {
-		t.Errorf("element attribute: %+v", err)
+		t.Errorf("element attribute: %+v", attr)
 	}
 
 }

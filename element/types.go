@@ -19,8 +19,7 @@ type WebElement interface {
 
 	// State
 	Attribute(attr string) string
-	// Attribute(attr string) (string, error)
-	Text() (string, error)
+	Text() string
 }
 
 type WebElements interface {
