@@ -27,8 +27,8 @@ func TestElementAttribute(t *testing.T) {
 		log.Fatal("find element", err)
 	}
 
-	attr, err := el.Attribute("href")
-	if err != nil || attr == "" {
+	attr := el.Attribute("href")
+	if attr == "" {
 		t.Errorf("element attribute: %+v", err)
 	}
 

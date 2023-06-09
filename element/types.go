@@ -18,7 +18,8 @@ type WebElement interface {
 	SendKeys(keys string) error
 
 	// State
-	Attribute(attr string) (string, error)
+	Attribute(attr string) string
+	// Attribute(attr string) (string, error)
 	Text() (string, error)
 }
 

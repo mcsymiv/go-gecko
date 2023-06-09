@@ -7,26 +7,26 @@ import (
 
 	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
+	"github.com/mcsymiv/go-gecko/strategy"
 )
 
-func (e *Element) Attribute(a string) (string, error) {
-	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Attribute, a)
-	r, err := request.Do(http.MethodGet, url, nil)
-	if err != nil {
-		log.Printf("Get attribute: %+v", err)
-		return "", err
-	}
-
-	attr := new(struct{ Value string })
-	err = json.Unmarshal(r, attr)
-	if err != nil {
-		log.Printf("Marshal attribute: %+v", err)
-		return "", nil
-	}
-
-	return attr.Value, nil
+type State struct {
+	AttributeUrl string
 }
 
+func (e *Element) Attribute(a string) string {
+
+	st := strategy.NewRequester(&State{
+		AttributeUrl: path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Attribute, a),
+	})
+	return st.Get()
+}
+
+func (s *State) Url() string {
+	return s.AttributeUrl
+}
+
+// Text
 func (e *Element) Text() (string, error) {
 	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Text)
 	r, err := request.Do(http.MethodGet, url, nil)
