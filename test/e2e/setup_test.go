@@ -34,5 +34,4 @@ func TestHomePage(t *testing.T) {
 	if err != nil || text == "" {
 		t.Errorf("unable to get text: %+v", err)
 	}
-
 }

@@ -11,6 +11,11 @@ type HomePage struct {
 	driver driver.WebDriver
 
 	ab element.WebElement
+	ABPage
+}
+
+type ABPage struct {
+	title element.WebElement
 }
 
 func NewHomePage(d driver.WebDriver) *HomePage {
