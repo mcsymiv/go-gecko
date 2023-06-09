@@ -19,10 +19,7 @@ func TestFindElement(t *testing.T) {
 
 	defer d.Quit()
 
-	_, err = d.Open("https://the-internet.herokuapp.com/")
-	if err != nil {
-		log.Fatal("Open url", err)
-	}
+	d.Open("https://the-internet.herokuapp.com/")
 
 	el, err := d.FindElement(element.ByLinkText, "A/B Testing")
 	if err != nil {
@@ -45,10 +42,7 @@ func TestFindElements(t *testing.T) {
 
 	defer d.Quit()
 
-	_, err = d.Open("https://the-internet.herokuapp.com/")
-	if err != nil {
-		log.Fatal("Open url", err)
-	}
+	d.Open("https://the-internet.herokuapp.com/")
 
 	els, err := d.FindElements(element.ByCssSelector, "#content li a")
 	if err != nil {

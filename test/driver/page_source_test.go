@@ -17,10 +17,7 @@ func TestPageSource(t *testing.T) {
 
 	defer d.Quit()
 
-	_, err = d.Open("https://the-internet.herokuapp.com/")
-	if err != nil {
-		t.Errorf("Failed open url: %+v", err)
-	}
+	d.Open("https://the-internet.herokuapp.com/")
 
 	ps, err := d.PageSource()
 	if err != nil || ps == "" {

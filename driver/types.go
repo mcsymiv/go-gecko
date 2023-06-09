@@ -6,8 +6,8 @@ import (
 
 type WebDriver interface {
 	// GetStatus() (*Status, error)
-	Open(u string) (string, error)
-	GetUrl() (string, error)
+	Open(u string)
+	GetUrl() string
 	Quit()
 
 	// Elemnents

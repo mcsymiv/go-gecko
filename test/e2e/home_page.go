@@ -1,8 +1,6 @@
 package e2e
 
 import (
-	"log"
-
 	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/element"
 )
@@ -19,10 +17,7 @@ type ABPage struct {
 }
 
 func NewHomePage(d driver.WebDriver) *HomePage {
-	_, err := d.Open("https://the-internet.herokuapp.com/")
-	if err != nil {
-		log.Fatal("unable to open home page")
-	}
+	d.Open("https://the-internet.herokuapp.com/")
 
 	return &HomePage{
 		driver: d,

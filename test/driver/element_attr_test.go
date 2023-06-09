@@ -17,10 +17,7 @@ func TestElementAttribute(t *testing.T) {
 
 	defer d.Quit()
 
-	_, err = d.Open("https://the-internet.herokuapp.com/")
-	if err != nil {
-		log.Fatal("open url", err)
-	}
+	d.Open("https://the-internet.herokuapp.com/")
 
 	el, err := d.FindElement(element.ByLinkText, "Typos")
 	if err != nil {

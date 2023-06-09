@@ -17,10 +17,7 @@ func TestClick(t *testing.T) {
 	}
 	defer d.Quit()
 
-	_, err = d.Open("https://www.google.com")
-	if err != nil {
-		t.Errorf("Url: %+v", err)
-	}
+	d.Open("https://www.google.com")
 
 	el, err := d.FindElement(element.ByCssSelector, "[class='FPdoLc lJ9FBc'] [class='RNmpXc']")
 	if err != nil {
@@ -29,10 +26,10 @@ func TestClick(t *testing.T) {
 
 	el.Click()
 
-	u, err := d.GetUrl()
-	if err != nil || u == "" {
+	u := d.GetUrl()
+	if u == "" {
 		t.Errorf("Unable to get URL: %+v", err)
 	}
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(2 * time.Second)
 }
