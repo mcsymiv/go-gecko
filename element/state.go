@@ -24,7 +24,7 @@ func (e *Element) Attribute(a string) string {
 	st := strategy.NewRequester(&State{
 		StateUrl: path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Attribute, a),
 	})
-	return st.Get()
+	return st.GetDefault()
 }
 
 // Text
@@ -34,5 +34,5 @@ func (e *Element) Text() string {
 	st := strategy.NewRequester(&State{
 		StateUrl: path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Text),
 	})
-	return st.Get()
+	return st.GetDefault()
 }

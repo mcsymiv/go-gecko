@@ -43,7 +43,7 @@ func (ctx *ContextRequester) SetRequester(r Requester) *ContextRequester {
 // Wraps GET method to the driver
 // And performs Default unmarshal for the response
 // Response example: { "value": string }
-func (ctx *ContextRequester) Get() string {
+func (ctx *ContextRequester) GetDefault() string {
 
 	// Url context wrapper for the path.UrlsArgs method
 	url := ctx.Url()
@@ -70,7 +70,7 @@ func (ctx *ContextRequester) Get() string {
 	return val.Value
 }
 
-func (ctx *ContextRequester) Post(d interface{}) {
+func (ctx *ContextRequester) PostDefault(d interface{}) {
 	url := ctx.Url()
 	data, err := json.Marshal(d)
 	if err != nil {

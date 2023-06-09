@@ -5,9 +5,12 @@ import (
 )
 
 type WebDriver interface {
-	// GetStatus() (*Status, error)
+	// Navigation
 	Open(u string)
 	GetUrl() string
+
+	// Session
+	// GetStatus() (*Status, error)
 	Quit()
 
 	// Elemnents
