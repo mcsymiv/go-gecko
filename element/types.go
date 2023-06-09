@@ -14,8 +14,8 @@ const (
 type WebElement interface {
 	ElementId() (string, error)
 	ElementIdentifier() map[string]string
-	Click() error
-	SendKeys(keys string) error
+	Click()
+	SendKeys(keys string)
 
 	// State
 	Attribute(attr string) string

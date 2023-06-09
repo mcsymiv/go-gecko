@@ -28,7 +28,7 @@ func (d *Driver) Open(u string) (string, error) {
 		return "", err
 	}
 
-	r, err := request.Do(http.MethodGet, path.UrlArgs(path.Session, d.Id, path.UrlPath), param)
+	r, err := request.Do(http.MethodGet, path.UrlArgs(path.Session, d.Id, path.UrlPath), nil)
 	if err != nil {
 		log.Printf("Open url GET error: %+v", err)
 		return "", err

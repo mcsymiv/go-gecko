@@ -69,3 +69,18 @@ func (ctx *ContextRequester) Get() string {
 
 	return val.Value
 }
+
+func (ctx *ContextRequester) Post(d interface{}) {
+	url := ctx.Url()
+	data, err := json.Marshal(d)
+	if err != nil {
+		log.Printf("Error marshal: %+v", err)
+	}
+
+	// Performs default POST method without returned value
+	// Or returned value from driver is null: { "value": nul }
+	_, err = request.Do(http.MethodPost, url, data)
+	if err != nil {
+		log.Printf("Error request: %+v", err)
+	}
+}
