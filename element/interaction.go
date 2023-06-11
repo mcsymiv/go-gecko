@@ -27,7 +27,7 @@ func (e *Element) Click() {
 	// Empty struct is used to avoid gecko driver bug
 	// That is thrown when POST is used without body
 	// Click driver endpoint requires no body
-	st.PostDefault(&Empty{})
+	st.Post(&Empty{})
 }
 
 // SendKeys
@@ -36,7 +36,7 @@ func (e *Element) SendKeys(s string) {
 		InteractionUrl: path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Value),
 	})
 
-	st.PostDefault(&SendKeys{
+	st.Post(&SendKeys{
 		Text: s,
 	})
 }

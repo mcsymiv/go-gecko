@@ -8,7 +8,16 @@ import (
 	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
+	"github.com/mcsymiv/go-gecko/strategy"
 )
+
+type Session struct {
+	SessionUrl string
+}
+
+func (s *Session) Url() string {
+	return s.SessionUrl
+}
 
 // New
 // Connect to the WebDriver instance running locally
@@ -19,21 +28,14 @@ func New(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, error) {
 		capFn(&c)
 	}
 
-	data, err := json.Marshal(c)
-	if err != nil {
-		log.Printf("Marshal capabilities: %+v", err)
-		return nil, err
-	}
-	log.Printf("caps 2: %+v", string(data))
+	st := strategy.NewRequester(&Session{
+		SessionUrl: path.Url(path.Session),
+	})
 
-	r, err := request.Do(http.MethodPost, path.Url(path.Session), data)
-	if err != nil {
-		log.Printf("Connect to driver instance with capabilities: %+v", err)
-		return nil, err
-	}
+	r := st.Post(c)
 
 	res := new(struct{ Value NewSessionResponse })
-	err = json.Unmarshal(r, &res)
+	err := json.Unmarshal(r, &res)
 	if err != nil {
 		log.Printf("Unmarshal capabilities: %+v", err)
 		return nil, err

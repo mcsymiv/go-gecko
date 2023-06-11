@@ -3,35 +3,34 @@ package driver
 import (
 	"encoding/json"
 	"log"
-	"net/http"
 
 	"github.com/mcsymiv/go-gecko/element"
 	"github.com/mcsymiv/go-gecko/path"
-	"github.com/mcsymiv/go-gecko/request"
 	"github.com/mcsymiv/go-gecko/selenium"
+	"github.com/mcsymiv/go-gecko/strategy"
 )
+
+type ElementRequest struct {
+	ElementUrl string
+}
+
+func (e *ElementRequest) Url() string {
+	return e.ElementUrl
+}
 
 // FindElement
 // Finds single element by specifying selector strategy and its value
 // Uses Selenium 3 protocol UUID-based string constant
 func (d *Driver) FindElement(by, value string) (element.WebElement, error) {
-	p := &element.FindUsing{
+
+	st := strategy.NewRequester(&ElementRequest{
+		ElementUrl: path.UrlArgs(path.Session, d.Id, path.Element),
+	})
+
+	el := st.Post(&element.FindUsing{
 		Using: by,
 		Value: value,
-	}
-
-	data, err := json.Marshal(p)
-	if err != nil {
-		log.Printf("Find element marshal: %+v", err)
-		return nil, err
-	}
-
-	url := path.UrlArgs(path.Session, d.Id, path.Element)
-	el, err := request.Do(http.MethodPost, url, data)
-	if err != nil {
-		log.Printf("Find element request: %+v", err)
-		return nil, err
-	}
+	})
 
 	res := new(struct{ Value map[string]string })
 	if err := json.Unmarshal(el, &res); err != nil {
@@ -39,6 +38,7 @@ func (d *Driver) FindElement(by, value string) (element.WebElement, error) {
 		return nil, err
 	}
 
+	// Retrieves w3c element id
 	id := selenium.ElementID(res.Value)
 
 	return &element.Element{
@@ -47,24 +47,17 @@ func (d *Driver) FindElement(by, value string) (element.WebElement, error) {
 	}, nil
 }
 
+// FindElements
 func (d *Driver) FindElements(by, value string) (element.WebElements, error) {
-	p := &element.FindUsing{
+
+	st := strategy.NewRequester(&ElementRequest{
+		ElementUrl: path.UrlArgs(path.Session, d.Id, path.Elements),
+	})
+
+	el := st.Post(&element.FindUsing{
 		Using: by,
 		Value: value,
-	}
-
-	data, err := json.Marshal(p)
-	if err != nil {
-		log.Printf("Find element marshal: %+v", err)
-		return nil, err
-	}
-
-	url := path.UrlArgs(path.Session, d.Id, path.Elements)
-	el, err := request.Do(http.MethodPost, url, data)
-	if err != nil {
-		log.Printf("Find element request: %+v", err)
-		return nil, err
-	}
+	})
 
 	res := new(struct{ Value []map[string]string })
 	if err := json.Unmarshal(el, &res); err != nil {
@@ -83,6 +76,7 @@ func (d *Driver) FindElements(by, value string) (element.WebElements, error) {
 	}, nil
 }
 
+// Init
 func (d *Driver) Init(by, val string) element.WebElement {
 	el, err := d.FindElement(by, val)
 	if err != nil {

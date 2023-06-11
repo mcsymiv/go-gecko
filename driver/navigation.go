@@ -24,7 +24,7 @@ func (d *Driver) Open(u string) {
 		NavigationUrl: path.UrlArgs(path.Session, d.Id, path.UrlPath),
 	})
 
-	st.PostDefault(map[string]string{
+	st.Post(map[string]string{
 		"url": u,
 	})
 }
@@ -34,5 +34,5 @@ func (d *Driver) GetUrl() string {
 	st := strategy.NewRequester(&Navigation{
 		NavigationUrl: path.UrlArgs(path.Session, d.Id, path.UrlPath),
 	})
-	return st.GetDefault()
+	return st.Get()
 }
