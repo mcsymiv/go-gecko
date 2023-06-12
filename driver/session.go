@@ -19,6 +19,30 @@ func (s *Session) Url() string {
 	return s.SessionUrl
 }
 
+func NewDriver(capsFn ...capabilities.CapabilitiesFunc) WebDriver {
+	c := capabilities.DefaultCapabilities()
+	for _, capFn := range capsFn {
+		capFn(&c)
+	}
+
+	st := strategy.NewRequester(&Session{
+		SessionUrl: path.Url(path.Session),
+	})
+
+	r := st.Post(c)
+
+	res := new(struct{ Value NewSessionResponse })
+	err := json.Unmarshal(r, &res)
+	if err != nil {
+		log.Printf("Unmarshal capabilities: %+v", err)
+		return nil
+	}
+
+	return &Driver{
+		Id: res.Value.SessionId,
+	}
+}
+
 // New
 // Connect to the WebDriver instance running locally
 func New(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, error) {
