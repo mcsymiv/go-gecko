@@ -3,27 +3,26 @@ package driver
 import (
 	"encoding/json"
 	"log"
-	"net/http"
 
 	"github.com/mcsymiv/go-gecko/path"
-	"github.com/mcsymiv/go-gecko/request"
+	"github.com/mcsymiv/go-gecko/strategy"
 )
 
-func (d *Driver) PageSource() (string, error) {
+type Document struct {
+	DocumentUrl string
+}
 
-	rr, err := request.Do(http.MethodGet, path.UrlArgs(path.Session, d.Id, path.PageSource), nil)
-	if err != nil {
-		log.Println("Status request error", err)
-		return "", err
-	}
+func (d *Document) Url() string {
+	return d.DocumentUrl
+}
 
-	page := new(struct{ Value string })
-	if err := json.Unmarshal(rr, page); err != nil {
-		log.Println("Status unmarshal error", err)
-		return "", err
-	}
+func (d *Driver) PageSource() string {
 
-	return page.Value, err
+	st := strategy.NewRequester(&Document{
+		DocumentUrl: path.UrlArgs(path.Session, d.Id, path.PageSource),
+	})
+
+	return st.Get()
 }
 
 // ExecuteScriptSync
@@ -32,19 +31,17 @@ func (d *Driver) ExecuteScriptSync(s string, args ...interface{}) error {
 		args = make([]interface{}, 0)
 	}
 
-	data, err := json.Marshal(map[string]interface{}{
+	st := strategy.NewRequester(&Document{
+		DocumentUrl: path.UrlArgs(path.Session, d.Id, path.Execute, path.ScriptSync),
+	})
+
+	r := st.Post(map[string]interface{}{
 		"script": s,
 		"args":   args,
 	})
 
-	r, err := request.Do(http.MethodPost, path.UrlArgs(path.Session, d.Id, path.Execute, path.ScriptSync), data)
-	if err != nil {
-		log.Println("Status request error", err)
-		return err
-	}
-
 	sr := new(struct{ Value interface{} })
-	err = json.Unmarshal(r, sr)
+	err := json.Unmarshal(r, sr)
 	if sr.Value != nil || err != nil {
 		log.Println("Status unmarshal error", err, sr.Value)
 		return err

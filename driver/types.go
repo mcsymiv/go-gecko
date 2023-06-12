@@ -20,7 +20,7 @@ type WebDriver interface {
 
 	// Document
 	ExecuteScriptSync(s string, args ...interface{}) error
-	PageSource() (string, error)
+	PageSource() string
 }
 
 type BrowserCapabilities interface {

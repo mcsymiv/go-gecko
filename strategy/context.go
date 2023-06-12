@@ -92,6 +92,8 @@ func (ctx *ContextRequester) Post(d interface{}) []byte {
 	}
 
 	// Response raw
+	// Checks for { "value" : { "error": ... }}
+	// Response from driver
 	rr := new(struct{ Value map[string]interface{} })
 	err = json.Unmarshal(res, rr)
 	if rr.Value["error"] != nil {
