@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os/exec"
+	"time"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/path"
@@ -19,7 +21,37 @@ func (dr *DriverRequest) Url() string {
 	return dr.DriverUrl
 }
 
-func NewDriver(capsFn ...capabilities.CapabilitiesFunc) WebDriver {
+const GeckoDriverPath = "/Users/mcs/Development/tools/geckodriver"
+
+// NewDriver
+func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
+
+	// Start Firefox webdriver proxy - GeckoDriver
+	// Redirects gecko proxy output to stdout and stderr
+	// Into projects logs directory
+	cmd := exec.Command("zsh", "-c", GeckoDriverPath, "--port", "4444", ">", "logs/gecko.session.logs", "2>&1", "&")
+	err := cmd.Start()
+	if err != nil {
+		log.Println("Failed to start driver:", err)
+		return &Session{}, cmd
+	}
+
+	// Tries to get webdriver process status
+	// Once driver isReady, returns command for deferred kill
+	for i := 0; i < 30; i++ {
+		time.Sleep(50 * time.Millisecond)
+		stat, err := GetStatus()
+		if err != nil {
+			log.Println("Error status:", err)
+			return &Session{}, cmd
+		}
+
+		if stat.Ready {
+			log.Println("Driver ready:", err)
+			break
+		}
+	}
+
 	c := capabilities.DefaultCapabilities()
 	for _, capFn := range capsFn {
 		capFn(&c)
@@ -32,15 +64,15 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) WebDriver {
 	r := st.Post(c)
 
 	res := new(struct{ Value NewSessionResponse })
-	err := json.Unmarshal(r, &res)
+	err = json.Unmarshal(r, &res)
 	if err != nil {
 		log.Printf("Unmarshal capabilities: %+v", err)
-		return nil
+		return &Session{}, cmd
 	}
 
 	return &Session{
 		Id: res.Value.SessionId,
-	}
+	}, cmd
 }
 
 // New

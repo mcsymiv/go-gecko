@@ -3,14 +3,13 @@ package driver
 import (
 	"log"
 	"testing"
-
-	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/session"
 )
 
 func TestElementAttribute(t *testing.T) {
 
-	d, err := driver.New()
+	d, err := session.New()
 	if err != nil {
 		log.Fatal("start session", err)
 	}

@@ -4,13 +4,13 @@ import (
 	"testing"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/session"
 )
 
 func TestExecuteScriptSync(t *testing.T) {
 
-	d, err := driver.New(capabilities.ImplicitWait(3000))
+	d, err := session.New(capabilities.ImplicitWait(3000))
 	if err != nil {
 		t.Errorf("Failed session: %+v", err)
 	}

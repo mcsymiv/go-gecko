@@ -4,6 +4,8 @@ import (
 	"github.com/mcsymiv/go-gecko/element"
 )
 
+// WebDriver
+// https://w3c.github.io/webdriver/
 type WebDriver interface {
 	// Navigation
 	Open(u string)
@@ -23,10 +25,15 @@ type WebDriver interface {
 	PageSource() string
 }
 
+// BrowserCapabilities
 type BrowserCapabilities interface {
 	ImplilcitWait(w float32)
 }
 
+// Session
+// Represents WebDriver
+// Holds session Id
+// Driver port
 type Session struct {
 	Id   string
 	Port string
@@ -38,6 +45,7 @@ type Status struct {
 	Ready   bool   `json:"ready"`
 }
 
+// NewSessionResponse
 type NewSessionResponse struct {
 	SessionId    string                 `json:"sessionId"`
 	Capabilities map[string]interface{} `json:"-"`

@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/session"
 )
 
 func TestGecko(t *testing.T) {
@@ -16,7 +16,7 @@ func TestGecko(t *testing.T) {
 		Args: []string{"--profile", "/Users/mcs/Library/Application Support/Firefox/Profiles/uupibms2.default-release"},
 	}
 
-	d, err := driver.New(
+	d, err := session.New(
 		capabilities.ImplicitWait(3000),
 		capabilities.Firefox(moz),
 	)

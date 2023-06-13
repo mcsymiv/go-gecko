@@ -5,16 +5,16 @@ import (
 	"testing"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/service"
+	"github.com/mcsymiv/go-gecko/session"
 )
 
-var d driver.WebDriver
+var d session.WebDriver
 var home HomePage
 
 func TestMain(m *testing.M) {
 	cmd, _ := service.Start()
-	d, _ = driver.New(capabilities.ImplicitWait(300))
+	d, _ = session.New(capabilities.ImplicitWait(300))
 
 	t := m.Run()
 

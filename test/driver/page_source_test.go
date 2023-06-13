@@ -4,13 +4,13 @@ import (
 	"testing"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/driver"
+	"github.com/mcsymiv/go-gecko/session"
 )
 
 func TestPageSource(t *testing.T) {
 
 	caps := capabilities.ImplicitWait(3000)
-	d, err := driver.New(caps)
+	d, err := session.New(caps)
 	if err != nil {
 		t.Errorf("Failed session: %+v", err)
 	}

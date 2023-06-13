@@ -6,8 +6,9 @@ import (
 	"time"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/keys"
+	"github.com/mcsymiv/go-gecko/session"
 )
 
 func TestCaps(t *testing.T) {
@@ -16,7 +17,7 @@ func TestCaps(t *testing.T) {
 		Args: []string{"--profile", "/Users/mcs/Development/tools/selenium_profile"},
 	}
 
-	d, err := driver.New(
+	d, err := session.New(
 		capabilities.ImplicitWait(3000),
 		capabilities.Firefox(moz),
 	)
@@ -32,7 +33,7 @@ func TestCaps(t *testing.T) {
 		t.Errorf("find el: %+v", err)
 	}
 
-	el.SendKeys(driver.EnterKey)
+	el.SendKeys(keys.EnterKey)
 
 	time.Sleep(15 * time.Second)
 }
