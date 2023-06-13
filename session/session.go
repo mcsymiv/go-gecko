@@ -1,4 +1,4 @@
-package driver
+package session
 
 import (
 	"encoding/json"
@@ -11,12 +11,36 @@ import (
 	"github.com/mcsymiv/go-gecko/strategy"
 )
 
-type Session struct {
-	SessionUrl string
+type DriverRequest struct {
+	DriverUrl string
 }
 
-func (s *Session) Url() string {
-	return s.SessionUrl
+func (dr *DriverRequest) Url() string {
+	return dr.DriverUrl
+}
+
+func NewDriver(capsFn ...capabilities.CapabilitiesFunc) WebDriver {
+	c := capabilities.DefaultCapabilities()
+	for _, capFn := range capsFn {
+		capFn(&c)
+	}
+
+	st := strategy.NewRequester(&DriverRequest{
+		DriverUrl: path.Url(path.Session),
+	})
+
+	r := st.Post(c)
+
+	res := new(struct{ Value NewSessionResponse })
+	err := json.Unmarshal(r, &res)
+	if err != nil {
+		log.Printf("Unmarshal capabilities: %+v", err)
+		return nil
+	}
+
+	return &Session{
+		Id: res.Value.SessionId,
+	}
 }
 
 // New
@@ -28,8 +52,8 @@ func New(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, error) {
 		capFn(&c)
 	}
 
-	st := strategy.NewRequester(&Session{
-		SessionUrl: path.Url(path.Session),
+	st := strategy.NewRequester(&DriverRequest{
+		DriverUrl: path.Url(path.Session),
 	})
 
 	r := st.Post(c)
@@ -41,7 +65,7 @@ func New(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, error) {
 		return nil, err
 	}
 
-	return &Driver{
+	return &Session{
 		Id: res.Value.SessionId,
 	}, nil
 }
@@ -69,6 +93,6 @@ func GetStatus() (*Status, error) {
 }
 
 // Closes session
-func (d *Driver) Quit() {
-	request.Do(http.MethodDelete, path.UrlArgs(path.Session, d.Id), nil)
+func (s *Session) Quit() {
+	request.Do(http.MethodDelete, path.UrlArgs(path.Session, s.Id), nil)
 }

@@ -1,4 +1,4 @@
-package driver
+package session
 
 import (
 	"encoding/json"
@@ -8,35 +8,35 @@ import (
 	"github.com/mcsymiv/go-gecko/strategy"
 )
 
-type Document struct {
+type DocumentRequest struct {
 	DocumentUrl string
 }
 
-func (d *Document) Url() string {
+func (d *DocumentRequest) Url() string {
 	return d.DocumentUrl
 }
 
-func (d *Driver) PageSource() string {
+func (s *Session) PageSource() string {
 
-	st := strategy.NewRequester(&Document{
-		DocumentUrl: path.UrlArgs(path.Session, d.Id, path.PageSource),
+	st := strategy.NewRequester(&DocumentRequest{
+		DocumentUrl: path.UrlArgs(path.Session, s.Id, path.PageSource),
 	})
 
 	return st.Get()
 }
 
 // ExecuteScriptSync
-func (d *Driver) ExecuteScriptSync(s string, args ...interface{}) error {
+func (s *Session) ExecuteScriptSync(script string, args ...interface{}) error {
 	if args == nil {
 		args = make([]interface{}, 0)
 	}
 
-	st := strategy.NewRequester(&Document{
-		DocumentUrl: path.UrlArgs(path.Session, d.Id, path.Execute, path.ScriptSync),
+	st := strategy.NewRequester(&DocumentRequest{
+		DocumentUrl: path.UrlArgs(path.Session, s.Id, path.Execute, path.ScriptSync),
 	})
 
 	r := st.Post(map[string]interface{}{
-		"script": s,
+		"script": script,
 		"args":   args,
 	})
 
