@@ -1,4 +1,4 @@
-package session
+package keys
 
 // Special keys, for SendKeys.
 const (

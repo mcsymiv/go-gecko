@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/mcsymiv/go-gecko/element"
-	"github.com/mcsymiv/go-gecko/session"
+	"github.com/mcsymiv/go-gecko/keys"
 	"github.com/mcsymiv/go-gecko/step"
 )
 
@@ -22,7 +22,7 @@ func TestParallel(t *testing.T) {
 		s.Open("https://www.google.com")
 		el := st.FindAndClick(element.ByCssSelector, "#APjFqb", t)
 		el.SendKeys("golang")
-		el.SendKeys(session.EnterKey)
+		el.SendKeys(keys.EnterKey)
 
 		el, _ = s.FindElement(element.ByCssSelector, "#rso h3")
 		title := el.Text()
