@@ -5,24 +5,24 @@ import (
 	"github.com/mcsymiv/go-gecko/strategy"
 )
 
-// State
+// StateRequest
 // Used for ContextRequester
-type State struct {
-	StateUrl string
+type StateRequest struct {
+	StateRequestUrl string
 }
 
 // Url
 // Requester method
-func (s *State) Url() string {
-	return s.StateUrl
+func (s *StateRequest) Url() string {
+	return s.StateRequestUrl
 }
 
 // Attribute
 // Returns elements attribute value
 func (e *Element) Attribute(a string) string {
 
-	st := strategy.NewRequester(&State{
-		StateUrl: path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Attribute, a),
+	st := strategy.NewRequester(&StateRequest{
+		StateRequestUrl: path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Attribute, a),
 	})
 	return st.Get()
 }
@@ -31,8 +31,8 @@ func (e *Element) Attribute(a string) string {
 // Returns an element’s text “as rendered”
 func (e *Element) Text() string {
 
-	st := strategy.NewRequester(&State{
-		StateUrl: path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Text),
+	st := strategy.NewRequester(&StateRequest{
+		StateRequestUrl: path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Text),
 	})
 	return st.Get()
 }

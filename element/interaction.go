@@ -7,20 +7,20 @@ import (
 
 // Interaction
 // ContextRequester for element interation actions
-type Interaction struct {
+type InteractionRequest struct {
 	InteractionUrl string
 }
 
 // Url
 // Requester method
-func (i *Interaction) Url() string {
+func (i *InteractionRequest) Url() string {
 	return i.InteractionUrl
 }
 
 // Click
 func (e *Element) Click() {
 
-	st := strategy.NewRequester(&Interaction{
+	st := strategy.NewRequester(&InteractionRequest{
 		InteractionUrl: path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Click),
 	})
 
@@ -32,7 +32,7 @@ func (e *Element) Click() {
 
 // SendKeys
 func (e *Element) SendKeys(s string) {
-	st := strategy.NewRequester(&Interaction{
+	st := strategy.NewRequester(&InteractionRequest{
 		InteractionUrl: path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Value),
 	})
 
