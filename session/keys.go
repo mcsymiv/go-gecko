@@ -1,4 +1,4 @@
-package driver
+package session
 
 // Special keys, for SendKeys.
 const (

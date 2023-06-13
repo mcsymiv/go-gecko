@@ -3,8 +3,8 @@ package parallel
 import (
 	"testing"
 
-	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/session"
 	"github.com/mcsymiv/go-gecko/step"
 )
 
@@ -12,19 +12,19 @@ import (
 // TODO: add pool of service and driver for parallel execution
 func TestParallel(t *testing.T) {
 
-	s, d := step.StartDriver(t)
-	defer s.Process.Kill()
-	defer d.Quit()
+	d, s := step.StartDriver(t)
+	defer d.Process.Kill()
+	defer s.Quit()
 
-	st := step.New(d)
+	st := step.New(s)
 
 	t.Run("search golang", func(t *testing.T) {
-		d.Open("https://www.google.com")
+		s.Open("https://www.google.com")
 		el := st.FindAndClick(element.ByCssSelector, "#APjFqb", t)
 		el.SendKeys("golang")
-		el.SendKeys(driver.EnterKey)
+		el.SendKeys(session.EnterKey)
 
-		el, _ = d.FindElement(element.ByCssSelector, "#rso h3")
+		el, _ = s.FindElement(element.ByCssSelector, "#rso h3")
 		title := el.Text()
 		if title != "The Go Programming Language" {
 			t.Fatalf("Invalid search title")
@@ -32,8 +32,8 @@ func TestParallel(t *testing.T) {
 	})
 
 	t.Run("open checkboxes", func(t *testing.T) {
-		d.Open("https://the-internet.herokuapp.com/")
-		el, _ := d.FindElement(element.ByLinkText, "Checkboxes")
+		s.Open("https://the-internet.herokuapp.com/")
+		el, _ := s.FindElement(element.ByLinkText, "Checkboxes")
 		el.Click()
 	})
 

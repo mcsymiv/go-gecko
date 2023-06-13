@@ -3,21 +3,21 @@ package step
 import (
 	"testing"
 
-	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/session"
 )
 
 type WebStep interface {
-	driver.WebDriver
+	session.WebDriver
 }
 
 type Step struct {
-	driver.WebDriver
+	session.WebDriver
 }
 
-func New(d driver.WebDriver) *Step {
+func New(s session.WebDriver) *Step {
 	return &Step{
-		WebDriver: d,
+		WebDriver: s,
 	}
 }
 

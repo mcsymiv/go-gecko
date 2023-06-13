@@ -1,4 +1,4 @@
-package driver
+package session
 
 import (
 	"encoding/json"
@@ -21,10 +21,10 @@ func (e *ElementRequest) Url() string {
 // FindElement
 // Finds single element by specifying selector strategy and its value
 // Uses Selenium 3 protocol UUID-based string constant
-func (d *Driver) FindElement(by, value string) (element.WebElement, error) {
+func (s *Session) FindElement(by, value string) (element.WebElement, error) {
 
 	st := strategy.NewRequester(&ElementRequest{
-		ElementUrl: path.UrlArgs(path.Session, d.Id, path.Element),
+		ElementUrl: path.UrlArgs(path.Session, s.Id, path.Element),
 	})
 
 	el := st.Post(&element.FindUsing{
@@ -42,16 +42,16 @@ func (d *Driver) FindElement(by, value string) (element.WebElement, error) {
 	id := selenium.ElementID(res.Value)
 
 	return &element.Element{
-		SessionId: d.Id,
+		SessionId: s.Id,
 		Id:        id,
 	}, nil
 }
 
 // FindElements
-func (d *Driver) FindElements(by, value string) (element.WebElements, error) {
+func (s *Session) FindElements(by, value string) (element.WebElements, error) {
 
 	st := strategy.NewRequester(&ElementRequest{
-		ElementUrl: path.UrlArgs(path.Session, d.Id, path.Elements),
+		ElementUrl: path.UrlArgs(path.Session, s.Id, path.Elements),
 	})
 
 	el := st.Post(&element.FindUsing{
@@ -71,14 +71,14 @@ func (d *Driver) FindElements(by, value string) (element.WebElements, error) {
 	}
 
 	return &element.Elements{
-		SessionId: d.Id,
+		SessionId: s.Id,
 		Ids:       els,
 	}, nil
 }
 
 // Init
-func (d *Driver) Init(by, val string) element.WebElement {
-	el, err := d.FindElement(by, val)
+func (s *Session) Init(by, val string) element.WebElement {
+	el, err := s.FindElement(by, val)
 	if err != nil {
 		log.Println("unable to find element", err, by, val)
 		return nil

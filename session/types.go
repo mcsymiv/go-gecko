@@ -1,4 +1,4 @@
-package driver
+package session
 
 import (
 	"github.com/mcsymiv/go-gecko/element"
@@ -27,8 +27,9 @@ type BrowserCapabilities interface {
 	ImplilcitWait(w float32)
 }
 
-type Driver struct {
-	Id string
+type Session struct {
+	Id   string
+	Port string
 }
 
 // Status response
