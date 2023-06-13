@@ -1,14 +1,12 @@
 package e2e
 
 import (
-	"log"
-
-	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/session"
 )
 
 type HomePage struct {
-	driver driver.WebDriver
+	session session.WebDriver
 
 	ab element.WebElement
 	ABPage
@@ -18,21 +16,18 @@ type ABPage struct {
 	title element.WebElement
 }
 
-func NewHomePage(d driver.WebDriver) *HomePage {
-	_, err := d.Open("https://the-internet.herokuapp.com/")
-	if err != nil {
-		log.Fatal("unable to open home page")
-	}
+func NewHomePage(s session.WebDriver) *HomePage {
+	s.Open("https://the-internet.herokuapp.com/")
 
 	return &HomePage{
-		driver: d,
-		ab:     d.Init(element.ByCssSelector, "#content li a"),
+		session: s,
+		ab:      s.Init(element.ByCssSelector, "#content li a"),
 	}
 }
 
 func (h *HomePage) ClickOnAbTestingLink() *ABPage {
 	h.ab.Click()
 	return &ABPage{
-		title: h.driver.Init(element.ByCssSelector, "#content h3"),
+		title: h.session.Init(element.ByCssSelector, "#content h3"),
 	}
 }

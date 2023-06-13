@@ -16,13 +16,5 @@ func TestOpenUrl(t *testing.T) {
 	}
 	defer d.Quit()
 
-	u := "https://the-internet.herokuapp.com/"
-	url, err := d.Open(u)
-	if err != nil {
-		t.Errorf("Url: %+v", err)
-	}
-
-	if url != u {
-		t.Errorf("Invalid url. Expected: %s. Actual: %s", u, url)
-	}
+	d.Open("https://the-internet.herokuapp.com/")
 }

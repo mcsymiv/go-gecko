@@ -11,6 +11,9 @@ import (
 
 const JsonContentType = "application/json"
 
+// Do
+// Performs http.Client request to the driver
+// Prints req, res values to the stdout
 func Do(method, url string, data []byte) (json.RawMessage, error) {
 	req, err := New(strings.ToUpper(method), url, data)
 	if err != nil {

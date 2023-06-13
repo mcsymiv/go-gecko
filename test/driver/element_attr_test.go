@@ -17,19 +17,16 @@ func TestElementAttribute(t *testing.T) {
 
 	defer d.Quit()
 
-	_, err = d.Open("https://the-internet.herokuapp.com/")
-	if err != nil {
-		log.Fatal("open url", err)
-	}
+	d.Open("https://the-internet.herokuapp.com/")
 
 	el, err := d.FindElement(element.ByLinkText, "Typos")
 	if err != nil {
 		log.Fatal("find element", err)
 	}
 
-	attr, err := el.Attribute("href")
-	if err != nil || attr == "" {
-		t.Errorf("element attribute: %+v", err)
+	attr := el.Attribute("href")
+	if attr == "" {
+		t.Errorf("element attribute: %+v", attr)
 	}
 
 }

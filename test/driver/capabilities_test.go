@@ -25,10 +25,7 @@ func TestCaps(t *testing.T) {
 	}
 	defer d.Quit()
 
-	_, err = d.Open("https://the-internet.herokuapp.com/")
-	if err != nil {
-		t.Errorf("Url: %+v", err)
-	}
+	d.Open("https://the-internet.herokuapp.com/")
 
 	el, err := d.FindElement(element.ByLinkText, "Inputs")
 	if err != nil {

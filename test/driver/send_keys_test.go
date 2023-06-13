@@ -18,10 +18,7 @@ func TestSendKeys(t *testing.T) {
 	}
 	defer d.Quit()
 
-	_, err = d.Open("https://www.google.com")
-	if err != nil {
-		t.Errorf("Url: %+v", err)
-	}
+	d.Open("https://www.google.com")
 
 	el, err := d.FindElement(element.ByCssSelector, "#APjFqb")
 	if err != nil {
@@ -32,5 +29,5 @@ func TestSendKeys(t *testing.T) {
 
 	el.SendKeys("hello")
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(1 * time.Second)
 }

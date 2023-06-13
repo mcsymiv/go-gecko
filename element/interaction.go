@@ -1,50 +1,42 @@
 package element
 
 import (
-	"encoding/json"
-	"log"
-	"net/http"
-
 	"github.com/mcsymiv/go-gecko/path"
-	"github.com/mcsymiv/go-gecko/request"
+	"github.com/mcsymiv/go-gecko/strategy"
 )
 
+// Interaction
+// ContextRequester for element interation actions
+type InteractionRequest struct {
+	InteractionUrl string
+}
+
+// Url
+// Requester method
+func (i *InteractionRequest) Url() string {
+	return i.InteractionUrl
+}
+
 // Click
-func (e *Element) Click() error {
-	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Click)
+func (e *Element) Click() {
 
-	data, err := json.Marshal(&Empty{})
-	if err != nil {
-		log.Printf("Error on empty click marshal: %+v", err)
-	}
+	st := strategy.NewRequester(&InteractionRequest{
+		InteractionUrl: path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Click),
+	})
 
-	_, err = request.Do(http.MethodPost, url, data)
-	if err != nil {
-		log.Printf("Error on click: %+v", err)
-		return err
-	}
-
-	return nil
+	// Empty struct is used to avoid gecko driver bug
+	// That is thrown when POST is used without body
+	// Click driver endpoint requires no body
+	st.Post(&Empty{})
 }
 
 // SendKeys
-func (e *Element) SendKeys(s string) error {
-	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Value)
-	k := &SendKeys{
+func (e *Element) SendKeys(s string) {
+	st := strategy.NewRequester(&InteractionRequest{
+		InteractionUrl: path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Value),
+	})
+
+	st.Post(&SendKeys{
 		Text: s,
-	}
-
-	data, err := json.Marshal(k)
-	if err != nil {
-		log.Printf("Send keys on marshal: %+v", err)
-		return err
-	}
-
-	_, err = request.Do(http.MethodPost, url, data)
-	if err != nil {
-		log.Printf("Click: %+v", err)
-		return err
-	}
-
-	return nil
+	})
 }

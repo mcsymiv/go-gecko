@@ -1,13 +1,16 @@
-package driver
+package session
 
 import (
 	"github.com/mcsymiv/go-gecko/element"
 )
 
 type WebDriver interface {
+	// Navigation
+	Open(u string)
+	GetUrl() string
+
+	// Session
 	// GetStatus() (*Status, error)
-	Open(u string) (string, error)
-	GetUrl() (string, error)
 	Quit()
 
 	// Elemnents
@@ -17,15 +20,16 @@ type WebDriver interface {
 
 	// Document
 	ExecuteScriptSync(s string, args ...interface{}) error
-	PageSource() (string, error)
+	PageSource() string
 }
 
 type BrowserCapabilities interface {
 	ImplilcitWait(w float32)
 }
 
-type Driver struct {
-	Id string
+type Session struct {
+	Id   string
+	Port string
 }
 
 // Status response
