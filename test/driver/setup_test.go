@@ -23,7 +23,7 @@ func TestMain(m *testing.M) {
 
 	// AfterTest
 	// Kills gecko proxy process
-	cmd.Process.Kill()
+	 cmd.Process.Kill()
 
 	os.Exit(t)
 }
