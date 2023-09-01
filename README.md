@@ -37,15 +37,24 @@ func TestDriver(t *testing.T) {
 ```
 There are other tests and w3c options you can explore:
 ```
-.
-├── capabilities_test.go
-├── click_element_test.go
-├── driver_test.go
-├── element_attr_test.go
-├── execute_script_test.go
-├── find_element_test.go
-├── open_url_test.go
-├── page_source_test.go
-├── send_keys_test.go
-└── setup_test.go
+└── test
+    ├── driver
+    │   ├── capabilities_test.go		// tests firefox moz option, existing profile
+    │   ├── click_element_test.go		// tests element click action
+    │   ├── driver_test.go			// test driver and firefox instance integration
+    │   ├── element_attr_test.go
+    │   ├── execute_script_test.go
+    │   ├── find_element_test.go
+    │   ├── open_url_test.go
+    │   ├── page_source_test.go
+    │   ├── send_keys_test.go
+    │   └── setup_test.go
+    ├── e2e
+    │   ├── home_page.go
+    │   └── setup_test.go
+    ├── existing
+    │   ├── existing_session_test.go
+    │   └── setup_test.go
+    └── parallel
+        └── parallel_test.go
 ```
