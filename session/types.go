@@ -40,12 +40,14 @@ type Session struct {
 }
 
 // Status response
+// W3C type
 type Status struct {
 	Message string `json:"message"`
 	Ready   bool   `json:"ready"`
 }
 
 // NewSessionResponse
+// W3C type
 type NewSessionResponse struct {
 	SessionId    string                 `json:"sessionId"`
 	Capabilities map[string]interface{} `json:"-"`

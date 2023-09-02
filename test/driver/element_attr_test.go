@@ -4,17 +4,11 @@ import (
 	"log"
 	"testing"
 	"github.com/mcsymiv/go-gecko/element"
-	"github.com/mcsymiv/go-gecko/session"
 )
 
 func TestElementAttribute(t *testing.T) {
-
-	d, err := session.New()
-	if err != nil {
-		log.Fatal("start session", err)
-	}
-
-	defer d.Quit()
+  d, tear := SetupTest()
+  defer tear()
 
 	d.Open("https://the-internet.herokuapp.com/")
 

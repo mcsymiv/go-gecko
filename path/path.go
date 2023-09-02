@@ -5,8 +5,9 @@ import (
 	"strings"
 )
 
+const BaseUrl  = "http://localhost:4444"
+
 const (
-	BaseUrl  = "http://localhost:4444"
 	Session  = "session"
 	Status   = "status"
 	UrlPath  = "url"

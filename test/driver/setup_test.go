@@ -1,29 +1,28 @@
 package driver
 
 import (
-	"log"
 	"os"
 	"testing"
 
-	"github.com/mcsymiv/go-gecko/service"
+  "github.com/mcsymiv/go-gecko/session"
+  "github.com/mcsymiv/go-gecko/capabilities"
 )
 
+func SetupTest() (session.WebDriver, func()) {
+    // Setup code here
+	  d, cmd := session.NewDriver(
+      capabilities.ImplicitWait(3000),
+    )
+
+    // tear down later
+    return d, func() {
+        // tear-down code here
+      d.Quit()
+      cmd.Process.Kill()
+    }
+}
+
 func TestMain(m *testing.M) {
-
-	// BeforeTest
-	// Starts new gecko proxy process
-	cmd, err := service.Start()
-	if err != nil {
-		log.Fatal("start gecko", err)
-	}
-
-	// Creates new driver session
-	// Starts TestDriver test
 	t := m.Run()
-
-	// AfterTest
-	// Kills gecko proxy process
-	 cmd.Process.Kill()
-
 	os.Exit(t)
 }

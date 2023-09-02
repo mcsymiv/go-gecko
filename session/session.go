@@ -42,7 +42,9 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 		time.Sleep(50 * time.Millisecond)
 		stat, err := GetStatus()
 		if err != nil {
-			log.Println("Error status:", err)
+			log.Println("Error getting driver status:", err)
+			log.Println("Killing cmd:", cmd)
+      cmd.Process.Kill()
 			return &Session{}, cmd
 		}
 
