@@ -1,21 +1,16 @@
 package driver
 
 import (
-	"log"
+	"github.com/mcsymiv/go-gecko/hooks"
 	"testing"
 	"time"
 
-	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/element"
-	"github.com/mcsymiv/go-gecko/session"
 )
 
 func TestClick(t *testing.T) {
-	d, err := session.New(capabilities.ImplicitWait(3000))
-	if err != nil {
-		log.Fatal("session start err", err)
-	}
-	defer d.Quit()
+	d, tear := hooks.StartDriver()
+	defer tear()
 
 	d.Open("https://www.google.com")
 
@@ -26,7 +21,7 @@ func TestClick(t *testing.T) {
 
 	el.Click()
 
-	u := d.GetUrl()
+	u, _ := d.GetUrl()
 	if u == "" {
 		t.Errorf("Unable to get URL: %+v", err)
 	}

@@ -1,14 +1,15 @@
 package driver
 
 import (
+	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/hooks"
 	"log"
 	"testing"
-	"github.com/mcsymiv/go-gecko/element"
 )
 
 func TestElementAttribute(t *testing.T) {
-  d, tear := SetupTest()
-  defer tear()
+	d, tear := hooks.StartDriver()
+	defer tear()
 
 	d.Open("https://the-internet.herokuapp.com/")
 
@@ -17,7 +18,7 @@ func TestElementAttribute(t *testing.T) {
 		log.Fatal("find element", err)
 	}
 
-	attr := el.Attribute("href")
+	attr, _ := el.Attribute("href")
 	if attr == "" {
 		t.Errorf("element attribute: %+v", attr)
 	}

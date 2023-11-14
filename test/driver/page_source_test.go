@@ -1,26 +1,19 @@
 package driver
 
 import (
+	"github.com/mcsymiv/go-gecko/hooks"
 	"testing"
-
-	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/session"
 )
 
 func TestPageSource(t *testing.T) {
 
-	caps := capabilities.ImplicitWait(3000)
-	d, err := session.New(caps)
-	if err != nil {
-		t.Errorf("Failed session: %+v", err)
-	}
-
-	defer d.Quit()
+	d, tear := hooks.StartDriver()
+	defer tear()
 
 	d.Open("https://the-internet.herokuapp.com/")
 
-	ps := d.PageSource()
-	if ps == "" {
+	ps, err := d.PageSource()
+	if ps == "" || err != nil {
 		t.Errorf("Failed to get page source: %+v", err)
 	}
 }

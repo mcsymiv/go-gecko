@@ -5,22 +5,18 @@ import (
 	"strings"
 )
 
-const BaseUrl  = "http://localhost:4444"
+const BaseUrl = "http://localhost:4444"
 
 const (
-	Session  = "session"
-	Status   = "status"
-	UrlPath  = "url"
-	Element  = "element"
-	Elements = "elements"
-	Click    = "click"
-	Value    = "value"
-
-	// Element
-	Attribute = "attribute"
-	Text      = "text"
-
-	// Document
+	Session    = "session"
+	Status     = "status"
+	UrlPath    = "url"
+	Element    = "element"
+	Elements   = "elements"
+	Click      = "click"
+	Value      = "value"
+	Attribute  = "attribute"
+	Text       = "text"
 	PageSource = "source"
 	Execute    = "execute"
 	ScriptSync = "sync"

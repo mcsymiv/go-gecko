@@ -2,6 +2,7 @@ package session
 
 import (
 	"encoding/json"
+	"github.com/mcsymiv/go-gecko/element"
 	"log"
 	"net/http"
 	"os/exec"
@@ -10,20 +11,50 @@ import (
 	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
-	"github.com/mcsymiv/go-gecko/strategy"
 )
 
-type DriverRequest struct {
-	DriverUrl string
+// WebDriver
+// https://w3c.github.io/webdriver/
+type WebDriver interface {
+	Open(u string) error
+	GetUrl() (string, error)
+	Quit()
+	Init(b, v string) element.WebElement
+	FindElement(b, v string) (element.WebElement, error)
+	FindElements(b, v string) (element.WebElements, error)
+	ExecuteScriptSync(s string, args ...interface{}) error
+	PageSource() (string, error)
 }
 
-func (dr *DriverRequest) Url() string {
-	return dr.DriverUrl
+type BrowserCapabilities interface {
+	ImplilcitWait(w float32)
+}
+
+// Session
+// Represents WebDriver
+// Holds session Id
+// Driver port
+type Session struct {
+	Id   string
+	Port string
+}
+
+// Status response
+// W3C type
+type Status struct {
+	Message string `json:"message"`
+	Ready   bool   `json:"ready"`
+}
+
+// NewSessionResponse
+// W3C type
+type NewSessionResponse struct {
+	SessionId    string                 `json:"sessionId"`
+	Capabilities map[string]interface{} `json:"-"`
 }
 
 const GeckoDriverPath = "/Users/mcs/Development/tools/geckodriver"
 
-// NewDriver
 func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 
 	// Start Firefox webdriver proxy - GeckoDriver
@@ -44,7 +75,7 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 		if err != nil {
 			log.Println("Error getting driver status:", err)
 			log.Println("Killing cmd:", cmd)
-      cmd.Process.Kill()
+			cmd.Process.Kill()
 			return &Session{}, cmd
 		}
 
@@ -59,14 +90,18 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 		capFn(&c)
 	}
 
-	st := strategy.NewRequester(&DriverRequest{
-		DriverUrl: path.Url(path.Session),
-	})
-
-	r := st.Post(c)
+	data, err := json.Marshal(c)
+	if err != nil {
+		log.Printf("New driver marshall error: %+v", err)
+	}
+	url := path.Url(path.Session)
+	rr, err := request.Do(http.MethodPost, url, data)
+	if err != nil {
+		log.Printf("New driver error request: %+v", err)
+	}
 
 	res := new(struct{ Value NewSessionResponse })
-	err = json.Unmarshal(r, &res)
+	err = json.Unmarshal(rr, &res)
 	if err != nil {
 		log.Printf("Unmarshal capabilities: %+v", err)
 		return &Session{}, cmd
@@ -75,33 +110,6 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 	return &Session{
 		Id: res.Value.SessionId,
 	}, cmd
-}
-
-// New
-// Connect to the WebDriver instance running locally
-func New(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, error) {
-
-	c := capabilities.DefaultCapabilities()
-	for _, capFn := range capsFn {
-		capFn(&c)
-	}
-
-	st := strategy.NewRequester(&DriverRequest{
-		DriverUrl: path.Url(path.Session),
-	})
-
-	r := st.Post(c)
-
-	res := new(struct{ Value NewSessionResponse })
-	err := json.Unmarshal(r, &res)
-	if err != nil {
-		log.Printf("Unmarshal capabilities: %+v", err)
-		return nil, err
-	}
-
-	return &Session{
-		Id: res.Value.SessionId,
-	}, nil
 }
 
 // GetStatus
@@ -126,7 +134,6 @@ func GetStatus() (*Status, error) {
 	return &reply.Value, nil
 }
 
-// Closes session
 func (s *Session) Quit() {
 	request.Do(http.MethodDelete, path.UrlArgs(path.Session, s.Id), nil)
 }

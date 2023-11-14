@@ -1,20 +1,18 @@
 package driver
 
 import (
+	"github.com/mcsymiv/go-gecko/hooks"
 	"log"
 	"testing"
-
-	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/session"
 )
 
 func TestOpenUrl(t *testing.T) {
 
-	d, err := session.New(capabilities.ImplicitWait(3000))
-	if err != nil {
-		log.Fatal("session start err", err)
-	}
-	defer d.Quit()
+	d, tear := hooks.StartDriver()
+	defer tear()
 
-	d.Open("https://the-internet.herokuapp.com/")
+	err := d.Open("https://the-internet.herokuapp.com/")
+	if err != nil {
+		log.Fatal("Open error")
+	}
 }
