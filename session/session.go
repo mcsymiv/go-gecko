@@ -2,11 +2,12 @@ package session
 
 import (
 	"encoding/json"
-	"github.com/mcsymiv/go-gecko/element"
 	"log"
 	"net/http"
 	"os/exec"
 	"time"
+
+	"github.com/mcsymiv/go-gecko/element"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/path"
@@ -22,8 +23,9 @@ type WebDriver interface {
 	Init(b, v string) element.WebElement
 	FindElement(b, v string) (element.WebElement, error)
 	FindElements(b, v string) (element.WebElements, error)
-	ExecuteScriptSync(s string, args ...interface{}) error
+	ExecuteScriptSync(s string, args ...interface{}) (interface{}, error)
 	PageSource() (string, error)
+  IsPageLoaded()
 }
 
 type BrowserCapabilities interface {
@@ -76,7 +78,7 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 			log.Println("Error getting driver status:", err)
 			log.Println("Killing cmd:", cmd)
 			cmd.Process.Kill()
-			return &Session{}, cmd
+			return nil, cmd
 		}
 
 		if stat.Ready {
@@ -93,18 +95,20 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 	data, err := json.Marshal(c)
 	if err != nil {
 		log.Printf("New driver marshall error: %+v", err)
+    return nil, cmd
 	}
 	url := path.Url(path.Session)
 	rr, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		log.Printf("New driver error request: %+v", err)
+    return nil, cmd
 	}
 
 	res := new(struct{ Value NewSessionResponse })
 	err = json.Unmarshal(rr, &res)
 	if err != nil {
 		log.Printf("Unmarshal capabilities: %+v", err)
-		return &Session{}, cmd
+		return nil, cmd
 	}
 
 	return &Session{
@@ -119,7 +123,8 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 // but may additionally include arbitrary meta information
 // that is specific to the implementation.
 func GetStatus() (*Status, error) {
-	rr, err := request.Do(http.MethodGet, path.Url(path.Status), nil)
+	url := path.Url(path.Status)
+	rr, err := request.Do(http.MethodGet, url, nil)
 	if err != nil {
 		log.Println("Status request error", err)
 		return nil, err

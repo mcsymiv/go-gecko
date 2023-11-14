@@ -2,10 +2,11 @@ package element
 
 import (
 	"encoding/json"
-	"github.com/mcsymiv/go-gecko/path"
-	"github.com/mcsymiv/go-gecko/request"
 	"log"
 	"net/http"
+
+	"github.com/mcsymiv/go-gecko/path"
+	"github.com/mcsymiv/go-gecko/request"
 )
 
 // Click
@@ -17,11 +18,18 @@ func (e *Element) Click() error {
 	if err != nil {
 		log.Printf("Error on empty click marshal: %+v", err)
 	}
-	_, err = request.Do(http.MethodPost, url, data)
+  rr, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		log.Printf("Error on click: %+v", err)
 		return err
 	}
+
+  res := new(struct{ Value map[string]string })
+  err = json.Unmarshal(rr, res)
+  if res.Value["error"] != "" || err != nil {
+    return err
+  }
+
 	return nil
 }
 

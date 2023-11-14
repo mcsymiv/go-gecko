@@ -8,18 +8,6 @@ import (
 	"net/http"
 )
 
-// Navigation
-// ContextRequester for driver navigation actions
-type NavigationRequest struct {
-	NavigationUrl string
-}
-
-// Url
-// Requester method
-func (n *NavigationRequest) Url() string {
-	return n.NavigationUrl
-}
-
 // Open
 // Goes to url
 func (s *Session) Open(u string) error {
@@ -32,18 +20,58 @@ func (s *Session) Open(u string) error {
 	}
 
 	url := path.UrlArgs(path.Session, s.Id, path.UrlPath)
+  log.Println("url", url)
 	rr, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		log.Printf("Open request error: %+v", err)
 		return err
 	}
+
 	res := new(struct{ Value []map[string]string })
 	if err := json.Unmarshal(rr, &res); err != nil {
 		log.Printf("Find element unmarshal: %+v", err)
 		return err
 	}
 
+
+  
+
 	return nil
+}
+
+// IsPageLoaded
+// TODO
+// Should validate if page is fully loaded 
+// And block test execution until true
+func (s *Session) IsPageLoaded() {
+
+  load := `
+    function load() {
+      if (document.readyState === "complete") {
+        return true
+      } else if (document.readyState === "interactive") {
+        // DOM ready! Images, frames, and other subresources are still downloading.
+        return false
+      } else {
+        return false
+      }
+    }
+    return load()
+  `
+  res, err := s.ExecuteScriptSync(load)
+  if err != nil {
+    log.Println("Page load script error", err)
+  }
+
+  if res.(bool) {
+    return
+  }
+
+  for {
+    if res, _ = s.ExecuteScriptSync(load); res != nil && res.(bool) {
+      break
+    }
+  }
 }
 
 // GetUrl

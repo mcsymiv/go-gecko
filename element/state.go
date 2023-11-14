@@ -8,18 +8,6 @@ import (
 	"net/http"
 )
 
-// StateRequest
-// Used for ContextRequester
-type StateRequest struct {
-	StateRequestUrl string
-}
-
-// Url
-// Requester method
-func (s *StateRequest) Url() string {
-	return s.StateRequestUrl
-}
-
 // Attribute
 // Returns elements attribute value
 func (e *Element) Attribute(a string) (string, error) {
@@ -59,3 +47,4 @@ func (e *Element) Text() (string, error) {
 
 	return text.Value, nil
 }
+
