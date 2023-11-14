@@ -7,7 +7,6 @@ import (
 
 	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/element"
-	"github.com/mcsymiv/go-gecko/keys"
 	"github.com/mcsymiv/go-gecko/session"
 )
 
@@ -33,7 +32,7 @@ func TestCaps(t *testing.T) {
 		t.Errorf("find el: %+v", err)
 	}
 
-	el.SendKeys(keys.EnterKey)
+	el.SendKeys(element.EnterKey)
 
 	time.Sleep(15 * time.Second)
 }

@@ -46,7 +46,6 @@ func (s *Session) FindElement(by, value string) (element.WebElement, error) {
 	}, nil
 }
 
-// FindElements
 func (s *Session) FindElements(by, value string) (element.WebElements, error) {
 	data, err := json.Marshal(&element.FindUsing{
 		Using: by,

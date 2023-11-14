@@ -19,7 +19,7 @@ func TestPageSource(t *testing.T) {
 
 	d.Open("https://the-internet.herokuapp.com/")
 
-	ps := d.PageSource()
+	ps, _ := d.PageSource()
 	if ps == "" {
 		t.Errorf("Failed to get page source: %+v", err)
 	}

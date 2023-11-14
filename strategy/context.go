@@ -70,7 +70,7 @@ func (ctx *ContextRequester) Get() string {
 	return val.Value
 }
 
-// PostDefault
+// Post PostDefault
 // Performs default POST method without returned value
 // Or returned value from driver is null: { "value": null }
 //

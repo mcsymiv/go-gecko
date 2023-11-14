@@ -30,12 +30,12 @@ func TestHomePage(t *testing.T) {
 	h := NewHomePage(d)
 	ab := h.ClickOnAbTestingLink()
 
-	attr := ab.title.Attribute("href")
+	attr, _ := ab.title.Attribute("href")
 	if attr != "" {
 		t.Errorf("found attr")
 	}
 
-	text := ab.title.Text()
+	text, _ := ab.title.Text()
 	if text == "" {
 		t.Errorf("unable to get text: %+v", text)
 	}

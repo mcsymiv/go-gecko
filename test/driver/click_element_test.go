@@ -26,7 +26,7 @@ func TestClick(t *testing.T) {
 
 	el.Click()
 
-	u := d.GetUrl()
+	u, _ := d.GetUrl()
 	if u == "" {
 		t.Errorf("Unable to get URL: %+v", err)
 	}
