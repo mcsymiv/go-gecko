@@ -11,6 +11,7 @@ import (
 type WebStep interface {
 	session.WebDriver
   Element() element.WebElement
+  SendAndSubmit(input string) WebStep
 }
 
 type Step struct {
@@ -65,5 +66,17 @@ func (s Step) FindCss(val string) WebStep {
     StepElement: el,
   }
 
+  return newStep
+}
+
+func (s Step) SendAndSubmit(input string) WebStep {
+  el := s.Element()
+
+  el.SendKeys(input)
+  el.SendKeys(element.EnterKey)
+
+  newStep := Step{
+    StepElement: el,
+  }
   return newStep
 }
