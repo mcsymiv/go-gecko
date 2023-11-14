@@ -53,7 +53,7 @@ type NewSessionResponse struct {
 	Capabilities map[string]interface{} `json:"-"`
 }
 
-const GeckoDriverPath = "geckodriver"
+const GeckoDriverPath = "/Users/mcs/Development/tools/geckodriver"
 
 func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 
@@ -110,37 +110,6 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 	return &Session{
 		Id: res.Value.SessionId,
 	}, cmd
-}
-
-// New
-// Connect to the WebDriver instance running locally
-func New(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, error) {
-
-	c := capabilities.DefaultCapabilities()
-	for _, capFn := range capsFn {
-		capFn(&c)
-	}
-
-	data, err := json.Marshal(c)
-	if err != nil {
-		log.Printf("New driver marshall error: %+v", err)
-	}
-	url := path.Url(path.Session)
-	rr, err := request.Do(http.MethodPost, url, data)
-	if err != nil {
-		log.Printf("New driver error request: %+v", err)
-	}
-
-	res := new(struct{ Value NewSessionResponse })
-	err = json.Unmarshal(rr, &res)
-	if err != nil {
-		log.Printf("Unmarshal capabilities: %+v", err)
-		return nil, err
-	}
-
-	return &Session{
-		Id: res.Value.SessionId,
-	}, nil
 }
 
 // GetStatus

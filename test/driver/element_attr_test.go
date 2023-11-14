@@ -2,12 +2,13 @@ package driver
 
 import (
 	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/hooks"
 	"log"
 	"testing"
 )
 
 func TestElementAttribute(t *testing.T) {
-	d, tear := SetupTest()
+	d, tear := hooks.StartDriver()
 	defer tear()
 
 	d.Open("https://the-internet.herokuapp.com/")

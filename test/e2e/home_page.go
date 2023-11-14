@@ -8,8 +8,8 @@ import (
 type HomePage struct {
 	session session.WebDriver
 
-	ab element.WebElement
-	ABPage
+	ab     element.WebElement
+	ABPage ABPage
 }
 
 type ABPage struct {

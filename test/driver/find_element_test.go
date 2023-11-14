@@ -1,23 +1,16 @@
 package driver
 
 import (
-	"log"
+	"github.com/mcsymiv/go-gecko/hooks"
 	"testing"
 
-	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/element"
-	"github.com/mcsymiv/go-gecko/session"
 )
 
 func TestFindElement(t *testing.T) {
 
-	caps := capabilities.ImplicitWait(3000)
-	d, err := session.New(caps)
-	if err != nil {
-		log.Fatal("Create session session", err)
-	}
-
-	defer d.Quit()
+	d, tear := hooks.StartDriver()
+	defer tear()
 
 	d.Open("https://the-internet.herokuapp.com/")
 
@@ -34,13 +27,8 @@ func TestFindElement(t *testing.T) {
 
 func TestFindElements(t *testing.T) {
 
-	caps := capabilities.ImplicitWait(3000)
-	d, err := session.New(caps)
-	if err != nil {
-		log.Fatal("Create session session", err)
-	}
-
-	defer d.Quit()
+	d, tear := hooks.StartDriver()
+	defer tear()
 
 	d.Open("https://the-internet.herokuapp.com/")
 

@@ -1,6 +1,7 @@
 package driver
 
 import (
+	"github.com/mcsymiv/go-gecko/hooks"
 	"testing"
 	"time"
 
@@ -8,8 +9,8 @@ import (
 )
 
 func TestClick(t *testing.T) {
-	d, cmd := SetupTest()
-	defer cmd()
+	d, tear := hooks.StartDriver()
+	defer tear()
 
 	d.Open("https://www.google.com")
 

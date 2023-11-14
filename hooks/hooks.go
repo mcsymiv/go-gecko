@@ -1,14 +1,11 @@
-package driver
+package hooks
 
 import (
-	"os"
-	"testing"
-
 	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/session"
 )
 
-func SetupTest() (session.WebDriver, func()) {
+func StartDriver() (session.WebDriver, func()) {
 	// Setup code here
 	d, cmd := session.NewDriver(
 		capabilities.ImplicitWait(3000),
@@ -20,9 +17,4 @@ func SetupTest() (session.WebDriver, func()) {
 		d.Quit()
 		cmd.Process.Kill()
 	}
-}
-
-func TestMain(m *testing.M) {
-	t := m.Run()
-	os.Exit(t)
 }

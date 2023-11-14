@@ -1,25 +1,20 @@
 package driver
 
 import (
+	"github.com/mcsymiv/go-gecko/hooks"
 	"testing"
 
-	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/element"
-	"github.com/mcsymiv/go-gecko/session"
 )
 
 func TestExecuteScriptSync(t *testing.T) {
 
-	d, err := session.New(capabilities.ImplicitWait(3000))
-	if err != nil {
-		t.Errorf("Failed session: %+v", err)
-	}
-
-	defer d.Quit()
+	d, tear := hooks.StartDriver()
+	defer tear()
 
 	d.Open("https://the-internet.herokuapp.com/")
 
-	err = d.ExecuteScriptSync("document.querySelector('#content li a').click()")
+	err := d.ExecuteScriptSync("document.querySelector('#content li a').click()")
 	if err != nil {
 		t.Errorf("Failed script: %+v", err)
 	}
