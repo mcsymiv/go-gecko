@@ -11,7 +11,6 @@ import (
 	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
-	"github.com/mcsymiv/go-gecko/strategy"
 )
 
 // WebDriver
@@ -54,17 +53,8 @@ type NewSessionResponse struct {
 	Capabilities map[string]interface{} `json:"-"`
 }
 
-type DriverRequest struct {
-	DriverUrl string
-}
+const GeckoDriverPath = "geckodriver"
 
-func (dr *DriverRequest) Url() string {
-	return dr.DriverUrl
-}
-
-const GeckoDriverPath = "/Users/mcs/Development/tools/geckodriver"
-
-// NewDriver
 func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 
 	// Start Firefox webdriver proxy - GeckoDriver
@@ -100,14 +90,18 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 		capFn(&c)
 	}
 
-	st := strategy.NewRequester(&DriverRequest{
-		DriverUrl: path.Url(path.Session),
-	})
-
-	r := st.Post(c)
+	data, err := json.Marshal(c)
+	if err != nil {
+		log.Printf("New driver marshall error: %+v", err)
+	}
+	url := path.Url(path.Session)
+	rr, err := request.Do(http.MethodPost, url, data)
+	if err != nil {
+		log.Printf("New driver error request: %+v", err)
+	}
 
 	res := new(struct{ Value NewSessionResponse })
-	err = json.Unmarshal(r, &res)
+	err = json.Unmarshal(rr, &res)
 	if err != nil {
 		log.Printf("Unmarshal capabilities: %+v", err)
 		return &Session{}, cmd
@@ -127,14 +121,18 @@ func New(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, error) {
 		capFn(&c)
 	}
 
-	st := strategy.NewRequester(&DriverRequest{
-		DriverUrl: path.Url(path.Session),
-	})
-
-	r := st.Post(c)
+	data, err := json.Marshal(c)
+	if err != nil {
+		log.Printf("New driver marshall error: %+v", err)
+	}
+	url := path.Url(path.Session)
+	rr, err := request.Do(http.MethodPost, url, data)
+	if err != nil {
+		log.Printf("New driver error request: %+v", err)
+	}
 
 	res := new(struct{ Value NewSessionResponse })
-	err := json.Unmarshal(r, &res)
+	err = json.Unmarshal(rr, &res)
 	if err != nil {
 		log.Printf("Unmarshal capabilities: %+v", err)
 		return nil, err
@@ -167,7 +165,6 @@ func GetStatus() (*Status, error) {
 	return &reply.Value, nil
 }
 
-// Closes session
 func (s *Session) Quit() {
 	request.Do(http.MethodDelete, path.UrlArgs(path.Session, s.Id), nil)
 }
