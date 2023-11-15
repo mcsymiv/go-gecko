@@ -2,9 +2,11 @@ package session
 
 import (
 	"encoding/json"
+	// "fmt"
 	"log"
 	"net/http"
 	"os/exec"
+	// "strings"
 	"time"
 
 	"github.com/mcsymiv/go-gecko/element"
@@ -25,7 +27,7 @@ type WebDriver interface {
 	FindElements(b, v string) (element.WebElements, error)
 	ExecuteScriptSync(s string, args ...interface{}) (interface{}, error)
 	PageSource() (string, error)
-  IsPageLoaded()
+	IsPageLoaded()
 }
 
 type BrowserCapabilities interface {
@@ -55,14 +57,40 @@ type NewSessionResponse struct {
 	Capabilities map[string]interface{} `json:"-"`
 }
 
-const GeckoDriverPath = "/Users/mcs/Development/tools/geckodriver"
+var GeckoDriverPath string = "/Users/mcs/Development/tools/geckodriver"
+var ChromeDriverPath string = "/Users/mcs/Development/tools/chromedriver"
 
 func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 
+  var driverPath string
+	c := capabilities.DefaultCapabilities()
+	for _, capFn := range capsFn {
+		capFn(&c)
+	}
+
+  if c.Capabilities.AlwaysMatch.BrowserName == "firefox" {
+    driverPath = GeckoDriverPath
+  } else {
+    driverPath = ChromeDriverPath 
+  }
+
+	var cmdArgs []string = []string{
+		"-c",    
+		driverPath,
+    // "--port",
+    // "4444",
+		">",
+		"logs/session.log",
+		"2>&1",
+		"&",
+	}
 	// Start Firefox webdriver proxy - GeckoDriver
 	// Redirects gecko proxy output to stdout and stderr
 	// Into projects logs directory
-	cmd := exec.Command("zsh", "-c", GeckoDriverPath, "--port", "4444", ">", "logs/gecko.session.logs", "2>&1", "&")
+
+  // Previously used line to start driver
+	// cmd := exec.Command("zsh", "-c", GeckoDriverPath, "--port", "4444", ">", "logs/gecko.session.logs", "2>&1", "&")
+  cmd := exec.Command("/bin/zsh", cmdArgs...)
 	err := cmd.Start()
 	if err != nil {
 		log.Println("Failed to start driver:", err)
@@ -87,33 +115,40 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 		}
 	}
 
-	c := capabilities.DefaultCapabilities()
-	for _, capFn := range capsFn {
-		capFn(&c)
-	}
 
+  res := initDriver(&c)
+  if res == nil {
+    log.Fatal("Unable to get capabilities", res)
+  }
+
+	return &Session{
+		Id: res.SessionId,
+	}, cmd
+}
+
+// initDriver
+// Return NewSessionResponce with session Id
+func initDriver(c *capabilities.NewSessionCapabilities) *NewSessionResponse {
 	data, err := json.Marshal(c)
 	if err != nil {
 		log.Printf("New driver marshall error: %+v", err)
-    return nil, cmd
+    return nil 
 	}
 	url := path.Url(path.Session)
 	rr, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		log.Printf("New driver error request: %+v", err)
-    return nil, cmd
+    return nil 
 	}
 
 	res := new(struct{ Value NewSessionResponse })
 	err = json.Unmarshal(rr, &res)
 	if err != nil {
 		log.Printf("Unmarshal capabilities: %+v", err)
-		return nil, cmd
+    return nil
 	}
 
-	return &Session{
-		Id: res.Value.SessionId,
-	}, cmd
+  return &res.Value
 }
 
 // GetStatus

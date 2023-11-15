@@ -59,6 +59,18 @@ func DefaultCapabilities() NewSessionCapabilities {
 	}
 }
 
+// Capabilities
+func Capabilities(browsername string) NewSessionCapabilities {
+	return NewSessionCapabilities{
+		BrowserCapabilities{
+			AlwaysMatch{
+				AcceptInsecureCerts: true,
+				BrowserName:         browsername,
+			},
+		},
+	}
+}
+
 func ImplicitWait(w float32) CapabilitiesFunc {
 	return func(cap *NewSessionCapabilities) {
 		cap.Capabilities.AlwaysMatch.Timeouts.Implicit = w
@@ -69,4 +81,10 @@ func Firefox(moz *MozOptions) CapabilitiesFunc {
 	return func(cap *NewSessionCapabilities) {
 		cap.Capabilities.AlwaysMatch.MozOptions = *moz
 	}
+}
+
+func BrowserName(b string) CapabilitiesFunc {
+  return func(cap *NewSessionCapabilities) {
+    cap.Capabilities.AlwaysMatch.BrowserName = b
+  }
 }
