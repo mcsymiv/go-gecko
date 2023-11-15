@@ -19,10 +19,6 @@ func TestPortForward(t *testing.T) {
 	d.IsPageLoaded()
 
 	time.Sleep(2 * time.Second)
-	passInput, _ := d.FindElement(element.ByCssSelector, "[id='local-pwd-tb'] [type='password']")
-	passInput.SendKeys("OrderOfThePhoniex1")
-
-	time.Sleep(2 * time.Second)
 	inputBtn, _ := d.FindElement(element.ByCssSelector, "[id='local-login-button'] [title='LOG IN']")
 	inputBtn.Click()
 
@@ -55,38 +51,3 @@ func TestPortForward(t *testing.T) {
 	saveBtn.Click()
 }
 
-func TestDownload(t *testing.T) {
-	d, tear := hooks.Driver(
-    capabilities.ImplicitWait(3000),
-    capabilities.BrowserName("chrome"),
-  )
-	defer tear()
-
-	d.Open("https://bgdt-teamcity.elateral-dev.io/login.html")
-	d.IsPageLoaded()
-
-	st := step.New(d)
-	st.FindX(".//a[text()='Log in using Azure Active Directory']").Element().Click()
-
-	st.FindCss("[id='i0116']").SendAndSubmit("serhii.maksymiv@elateralazure.onmicrosoft.com")
-
-	time.Sleep(3 * time.Second)
-	st.FindCss("[id='i0118']").SendAndSubmit("!Mcsymivqamadness29$")
-
-	time.Sleep(2 * time.Second)
-	st.FindCss("[id='idSIButton9']").Element().Click()
-
-	time.Sleep(2 * time.Second)
-	st.FindX(".//span[text()='Projects']").Element().Click()
-	st.FindCss("[id='search-projects']").SendAndSubmit("dev01")
-
-	st.FindX(".//aside//span[text()='1 - Smoke (Concurrent tests)']").Element().Click()
-
-	time.Sleep(2 * time.Second)
-	st.FindCss("[data-grid-root] [data-test-build-number-link]").Element().Click()
-
-	time.Sleep(2 * time.Second)
-	st.FindCss("[data-tab-title='Allure Report']").Element().Click()
-
-	time.Sleep(2 * time.Second)
-}
