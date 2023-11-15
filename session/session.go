@@ -71,6 +71,9 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 	var cmdArgs []string = driverCommand(c)
 	log.Println(cmdArgs)
 
+ // todo
+ // create http client with set port
+
 	// Start Firefox webdriver proxy - GeckoDriver
 	// Redirects gecko proxy output to stdout and stderr
 	// Into projects logs directory
