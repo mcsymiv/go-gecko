@@ -13,8 +13,8 @@ import (
 const JsonContentType = "application/json"
 
 type LoggingRoundTripper struct {
-  next http.RoundTripper
-  logger *log.Logger
+	next   http.RoundTripper
+	logger *log.Logger
 }
 
 func (l LoggingRoundTripper) RoundTrip(r *http.Request) (*http.Response, error) {
@@ -24,7 +24,7 @@ func (l LoggingRoundTripper) RoundTrip(r *http.Request) (*http.Response, error) 
 	if r.Body != nil {
 		l.logger.Printf("Request data: %s", r.Body)
 	}
-  return l.next.RoundTrip(r)
+	return l.next.RoundTrip(r)
 }
 
 // Do
@@ -37,11 +37,11 @@ func Do(method, url string, data []byte) (json.RawMessage, error) {
 	}
 
 	c := &http.Client{
-    Transport: &LoggingRoundTripper{
-      next: http.DefaultTransport,
-      logger: log.New(os.Stdout,	"[info]\t", log.Ldate|log.Ltime),
-    },
-  }
+		Transport: &LoggingRoundTripper{
+			next:   http.DefaultTransport,
+			logger: log.New(os.Stdout, "[info]\t", log.Ldate|log.Ltime),
+		},
+	}
 	res, err := c.Do(req)
 	if err != nil {
 		return nil, err

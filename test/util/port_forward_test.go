@@ -66,7 +66,7 @@ func loadEnv() {
 }
 
 func TestPortForward(t *testing.T) {
-  loadEnv()
+	loadEnv()
 
 	d, tear := hooks.StartDriver()
 	defer tear()
@@ -96,7 +96,7 @@ func TestPortForward(t *testing.T) {
 }
 
 func TestDownload(t *testing.T) {
-  loadEnv()
+	loadEnv()
 
 	d, tear := hooks.Driver(
 		capabilities.ImplicitWait(10000),
