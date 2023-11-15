@@ -12,10 +12,23 @@ func StartDriver() (session.WebDriver, func()) {
 	d, cmd := session.NewDriver(
 		capabilities.ImplicitWait(5000),
 	)
-  if d == nil {
-    log.Fatal("Unable to start driver")
-  }
+	if d == nil {
+		log.Fatal("Unable to start driver")
+	}
 
+	// tear down later
+	return d, func() {
+		// tear-down code here
+		d.Quit()
+		cmd.Process.Kill()
+	}
+}
+
+func Driver(caps ...capabilities.CapabilitiesFunc) (session.WebDriver, func()) {
+	d, cmd := session.NewDriver(caps...)
+	if d == nil {
+		log.Fatal("Unable to start driver")
+	}
 	// tear down later
 	return d, func() {
 		// tear-down code here

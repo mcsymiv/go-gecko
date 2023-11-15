@@ -5,7 +5,10 @@ import (
 	"strings"
 )
 
+// gecko default port
 const BaseUrl = "http://localhost:4444"
+// chrome default port
+// const BaseUrl = "http://localhost:9515"
 
 const (
 	Session    = "session"
