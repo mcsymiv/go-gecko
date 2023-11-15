@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/hooks"
 	"github.com/mcsymiv/go-gecko/step"
 )
@@ -16,37 +15,23 @@ func TestPortForward(t *testing.T) {
 
 	d.Open("http://192.168.0.1")
 	d.IsPageLoaded()
+	st := step.New(d)
 
 	time.Sleep(2 * time.Second)
-	inputBtn, _ := d.FindElement(element.ByCssSelector, "[id='local-login-button'] [title='LOG IN']")
-	inputBtn.Click()
-
+	st.FindCss("[id='local-login-button'] [title='LOG IN']").Element().Click()
 	time.Sleep(2 * time.Second)
-	advanced, _ := d.FindElement(element.ByXPath, ".//span[contains(text(),'Advanced')]")
-	advanced.Click()
-
+	st.FindX(".//span[contains(text(),'Advanced')]").Element().Click()
 	time.Sleep(2 * time.Second)
-	natForward, _ := d.FindElement(element.ByXPath, ".//span[text()='NAT Forwarding']")
-	natForward.Click()
-
+	st.FindX(".//span[text()='NAT Forwarding']").Element().Click()
 	time.Sleep(2 * time.Second)
-	portForward, _ := d.FindElement(element.ByXPath, ".//span[text()='Port Forwarding']")
-	portForward.Click()
-
+	st.FindX(".//span[text()='Port Forwarding']").Element().Click()
 	time.Sleep(2 * time.Second)
-	editIcon, _ := d.FindElement(element.ByXPath, ".//a[contains(@class,'btn-edit')]")
-	editIcon.Click()
-
+	st.FindX(".//a[contains(@class,'btn-edit')]").Element().Click()
 	time.Sleep(2 * time.Second)
-	connDevices, _ := d.FindElement(element.ByXPath, ".//span[text()='VIEW CONNECTED DEVICES']")
-	connDevices.Click()
-
+  st.FindX(".//span[text()='VIEW CONNECTED DEVICES']").Element().Click()
 	time.Sleep(2 * time.Second)
-	myPcDevice, _ := d.FindElement(element.ByXPath, ".//span[contains(text(), 'mcs-pc')]/..")
-	myPcDevice.Click()
-
+	st.FindX(".//span[contains(text(), 'mcs-pc')]/..").Element().Click()
 	time.Sleep(2 * time.Second)
-	saveBtn, _ := d.FindElement(element.ByXPath, ".//div[contains(@class,'msg-content-wrap')]//span[text()='SAVE']")
-	saveBtn.Click()
+	st.FindX(".//div[contains(@class,'msg-content-wrap')]//span[text()='SAVE']").Element().Click()
 }
 
