@@ -34,7 +34,7 @@ func ElementsID(v []map[string]string) []string {
 	for _, el := range v {
 		id, ok := el[WebElementIdentifier]
 		if !ok || id == "" {
-			log.Println("Error on find element", v)
+			log.Println("Error on find elements", v)
 		}
 		els = append(els, id)
 	}

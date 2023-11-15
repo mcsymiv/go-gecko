@@ -62,93 +62,92 @@ var ChromeDriverPath string = "/Users/mcs/Development/tools/chromedriver"
 
 func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 
-  var driverPath string
 	c := capabilities.DefaultCapabilities()
 	for _, capFn := range capsFn {
 		capFn(&c)
 	}
 
-  if c.Capabilities.AlwaysMatch.BrowserName == "firefox" {
-    driverPath = GeckoDriverPath
-  } else {
-    driverPath = ChromeDriverPath 
-  }
+	// Returns command arguments for specified driver to start from shell
+	var cmdArgs []string = driverCommand(c)
+	log.Println(cmdArgs)
 
-	var cmdArgs []string = []string{
-		"-c",    
-		driverPath,
-    // "--port",
-    // "4444",
-		">",
-		"logs/session.log",
-		"2>&1",
-		"&",
-	}
 	// Start Firefox webdriver proxy - GeckoDriver
 	// Redirects gecko proxy output to stdout and stderr
 	// Into projects logs directory
-
-  // Previously used line to start driver
+	// Previously used line to start driver
 	// cmd := exec.Command("zsh", "-c", GeckoDriverPath, "--port", "4444", ">", "logs/gecko.session.logs", "2>&1", "&")
-  cmd := exec.Command("/bin/zsh", cmdArgs...)
+	cmd := exec.Command("/bin/zsh", cmdArgs...)
 	err := cmd.Start()
 	if err != nil {
 		log.Println("Failed to start driver:", err)
 		return &Session{}, cmd
 	}
 
-	// Tries to get webdriver process status
+	// Tries to get driver status for 2 seconds
 	// Once driver isReady, returns command for deferred kill
-	for i := 0; i < 30; i++ {
-		time.Sleep(50 * time.Millisecond)
-		stat, err := GetStatus()
-		if err != nil {
-			log.Println("Error getting driver status:", err)
+	start := time.Now()
+	end := start.Add(2 * time.Second)
+	for stat, err := GetStatus(); err != nil || !stat.Ready; stat, err = GetStatus() {
+		time.Sleep(200 * time.Millisecond)
+		log.Println("Error getting driver status:", err)
+
+		if time.Now().After(end) {
 			log.Println("Killing cmd:", cmd)
 			cmd.Process.Kill()
 			return nil, cmd
 		}
-
-		if stat.Ready {
-			log.Println("Driver ready:", err)
-			break
-		}
 	}
 
-
-  res := initDriver(&c)
-  if res == nil {
-    log.Fatal("Unable to get capabilities", res)
-  }
+	s := startSession(&c)
+	if s == nil {
+		log.Fatal("Unable to start session", s)
+	}
 
 	return &Session{
-		Id: res.SessionId,
+		Id: s.SessionId,
 	}, cmd
 }
 
 // initDriver
 // Return NewSessionResponce with session Id
-func initDriver(c *capabilities.NewSessionCapabilities) *NewSessionResponse {
+func startSession(c *capabilities.NewSessionCapabilities) *NewSessionResponse {
 	data, err := json.Marshal(c)
 	if err != nil {
 		log.Printf("New driver marshall error: %+v", err)
-    return nil 
+		return nil
 	}
 	url := path.Url(path.Session)
 	rr, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		log.Printf("New driver error request: %+v", err)
-    return nil 
+		return nil
 	}
 
 	res := new(struct{ Value NewSessionResponse })
 	err = json.Unmarshal(rr, &res)
 	if err != nil {
 		log.Printf("Unmarshal capabilities: %+v", err)
-    return nil
+		return nil
 	}
 
-  return &res.Value
+	return &res.Value
+}
+
+// driverCommand
+// Check for specified driver/browser name to pass to cmd to start the driver server
+func driverCommand(cap capabilities.NewSessionCapabilities) []string {
+	var cmdArgs []string = []string{
+		"-c",
+	}
+
+	if cap.Capabilities.AlwaysMatch.BrowserName == "firefox" {
+		cmdArgs = append(cmdArgs, GeckoDriverPath, "--port", "4444")
+	} else {
+		cmdArgs = append(cmdArgs, ChromeDriverPath)
+	}
+
+	cmdArgs = append(cmdArgs, ">", "logs/session.log", "2>&1", "&")
+	return cmdArgs
 }
 
 // GetStatus

@@ -6,9 +6,9 @@ import (
 )
 
 // gecko default port
-// const BaseUrl = "http://localhost:4444"
+const BaseUrl = "http://localhost:4444"
 // chrome default port
-const BaseUrl = "http://localhost:9515"
+// const BaseUrl = "http://localhost:9515"
 
 const (
 	Session    = "session"

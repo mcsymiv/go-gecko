@@ -44,7 +44,6 @@ func (s *Session) Open(u string) error {
 // Should validate if page is fully loaded 
 // And block test execution until true
 func (s *Session) IsPageLoaded() {
-
   load := `
     function load() {
       if (document.readyState === "complete") {
