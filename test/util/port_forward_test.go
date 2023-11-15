@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/element"
 	"github.com/mcsymiv/go-gecko/hooks"
 	"github.com/mcsymiv/go-gecko/step"
 )
