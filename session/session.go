@@ -28,6 +28,7 @@ type WebDriver interface {
 	ExecuteScriptSync(s string, args ...interface{}) (interface{}, error)
 	PageSource() (string, error)
 	IsPageLoaded()
+  SwitchFrame(element.WebElement) error
 }
 
 type BrowserCapabilities interface {

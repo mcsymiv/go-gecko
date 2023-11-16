@@ -2,10 +2,12 @@ package session
 
 import (
 	"encoding/json"
-	"github.com/mcsymiv/go-gecko/path"
-	"github.com/mcsymiv/go-gecko/request"
 	"log"
 	"net/http"
+
+	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/path"
+	"github.com/mcsymiv/go-gecko/request"
 )
 
 // Open
@@ -32,9 +34,6 @@ func (s *Session) Open(u string) error {
 		log.Printf("Find element unmarshal: %+v", err)
 		return err
 	}
-
-
-  
 
 	return nil
 }
@@ -90,3 +89,31 @@ func (s *Session) GetUrl() (string, error) {
 
 	return val.Value, nil
 }
+
+func (s Session) SwitchFrame(e element.WebElement) error {
+  url := path.UrlArgs(path.Session, s.Id, path.SwitchFrame)
+  param := map[string]int{
+    "id": 0,
+  }
+  data, err := json.Marshal(param)
+  if err != nil {
+    log.Println("Switch frame marshal error", err)
+    return err
+  }
+
+  rr, err := request.Do(http.MethodPost, url, data)
+  if err != nil {
+    log.Println("Switch frame request error", err)
+    return err 
+  }
+
+	val := new(struct{ Value map[string]interface{} })
+	err = json.Unmarshal(rr, val)
+	if err != nil {
+		log.Printf("Switch frame error on unmarshal: %+v", err)
+		return nil
+	}
+
+  return nil 
+}
+
