@@ -1,10 +1,10 @@
-package driver
+package drivertest
 
 import (
+	"github.com/mcsymiv/go-gecko/driver"
 	"testing"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/session"
 )
 
 // TestNewDriver
@@ -12,7 +12,7 @@ import (
 func TestNewDriver(t *testing.T) {
 
 	// Connect to the WebDriver instance running locally
-	d, cmd := session.NewDriver(capabilities.ImplicitWait(3000))
+	d, cmd := driver.NewDriver(capabilities.ImplicitWait(3000))
 
 	defer cmd.Process.Kill()
 	defer d.Quit()
@@ -28,7 +28,7 @@ func TestNewHeadlessDriver(t *testing.T) {
 	}
 
 	// Connect to the WebDriver instance running locally
-	d, cmd := session.NewDriver(
+	d, cmd := driver.NewDriver(
 		capabilities.ImplicitWait(3000),
 		capabilities.Firefox(moz),
 	)

@@ -4,12 +4,12 @@ import (
 	"log"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/session"
+	"github.com/mcsymiv/go-gecko/driver"
 )
 
-func StartDriver() (session.WebDriver, func()) {
+func StartDriver() (driver.WebDriver, func()) {
 	// Setup code here
-	d, cmd := session.NewDriver(
+	d, cmd := driver.NewDriver(
 		capabilities.ImplicitWait(5000),
 	)
 	if d == nil {
@@ -24,8 +24,8 @@ func StartDriver() (session.WebDriver, func()) {
 	}
 }
 
-func Driver(caps ...capabilities.CapabilitiesFunc) (session.WebDriver, func()) {
-	d, cmd := session.NewDriver(caps...)
+func Driver(caps ...capabilities.CapabilitiesFunc) (driver.WebDriver, func()) {
+	d, cmd := driver.NewDriver(caps...)
 	if d == nil {
 		log.Fatal("Unable to start driver")
 	}

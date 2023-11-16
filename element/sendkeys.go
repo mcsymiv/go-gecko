@@ -9,31 +9,6 @@ import (
 	"github.com/mcsymiv/go-gecko/request"
 )
 
-// Click
-// Performs click on an element
-// Returns error
-func (e *Element) Click() error {
-	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Click)
-	data, err := json.Marshal(&Empty{})
-	if err != nil {
-		log.Printf("Error on empty click marshal: %+v", err)
-	}
-  rr, err := request.Do(http.MethodPost, url, data)
-	if err != nil {
-		log.Printf("Error on click: %+v", err)
-		return err
-	}
-
-  res := new(struct{ Value map[string]string })
-  err = json.Unmarshal(rr, res)
-  if res.Value["error"] != "" || err != nil {
-    return err
-  }
-
-	return nil
-}
-
-// Special keys, for SendKeys.
 const (
 	NullKey       = string('\ue000')
 	CancelKey     = string('\ue001')
@@ -92,8 +67,6 @@ const (
 	MetaKey       = string('\ue03d')
 )
 
-// SendKeys
-// Send keys
 func (e *Element) SendKeys(s string) error {
 	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Value)
 	k := &SendKeys{

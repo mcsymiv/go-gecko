@@ -1,4 +1,4 @@
-package session
+package driver
 
 import (
 	"encoding/json"
@@ -12,7 +12,7 @@ import (
 
 // Open
 // Goes to url
-func (s *Session) Open(u string) error {
+func (d Driver) Open(u string) error {
 	data, err := json.Marshal(map[string]string{
 		"url": u,
 	})
@@ -21,7 +21,7 @@ func (s *Session) Open(u string) error {
 		return err
 	}
 
-	url := path.UrlArgs(path.Session, s.Id, path.UrlPath)
+	url := path.UrlArgs(path.Session, d.SessionId, path.UrlPath)
 	log.Println("url", url)
 	rr, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
@@ -42,7 +42,7 @@ func (s *Session) Open(u string) error {
 // TODO
 // Should validate if page is fully loaded
 // And block test execution until true
-func (s *Session) IsPageLoaded() {
+func (d Driver) IsPageLoaded() {
 	load := `
     function load() {
       if (document.readyState === "complete") {
@@ -56,7 +56,7 @@ func (s *Session) IsPageLoaded() {
     }
     return load()
   `
-	res, err := s.ExecuteScriptSync(load)
+	res, err := d.ExecuteScriptSync(load)
 	if err != nil {
 		log.Println("Page load script error", err)
 	}
@@ -66,15 +66,15 @@ func (s *Session) IsPageLoaded() {
 	}
 
 	for {
-		if res, _ = s.ExecuteScriptSync(load); res != nil && res.(bool) {
+		if res, _ = d.ExecuteScriptSync(load); res != nil && res.(bool) {
 			break
 		}
 	}
 }
 
 // GetUrl
-func (s *Session) GetUrl() (string, error) {
-	url := path.UrlArgs(path.Session, s.Id, path.UrlPath)
+func (d Driver) GetUrl() (string, error) {
+	url := path.UrlArgs(path.Session, d.SessionId, path.UrlPath)
 	rr, err := request.Do(http.MethodGet, url, nil)
 	if err != nil {
 		log.Printf("Open request error: %+v", err)
@@ -90,8 +90,8 @@ func (s *Session) GetUrl() (string, error) {
 	return val.Value, nil
 }
 
-func (s Session) SwitchFrame(e element.WebElement) error {
-	url := path.UrlArgs(path.Session, s.Id, path.SwitchFrame)
+func (d Driver) SwitchFrame(e element.WebElement) error {
+	url := path.UrlArgs(path.Session, d.SessionId, path.SwitchFrame)
 	param := map[string]int{
 		"id": 0,
 	}

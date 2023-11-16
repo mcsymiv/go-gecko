@@ -1,4 +1,4 @@
-package driver
+package drivertest
 
 import (
 	"github.com/mcsymiv/go-gecko/hooks"

@@ -1,4 +1,4 @@
-package session
+package driver
 
 import (
 	"encoding/json"
@@ -14,7 +14,7 @@ import (
 // FindElement
 // Finds single element by specifying selector strategy and its value
 // Uses Selenium 3 protocol UUID-based string constant
-func (s *Session) FindElement(by, value string) (element.WebElement, error) {
+func (d Driver) FindElement(by, value string) (element.WebElement, error) {
 	data, err := json.Marshal(&element.FindUsing{
 		Using: by,
 		Value: value,
@@ -24,7 +24,7 @@ func (s *Session) FindElement(by, value string) (element.WebElement, error) {
 		return nil, err
 	}
 
-	url := path.UrlArgs(path.Session, s.Id, path.Element)
+	url := path.UrlArgs(path.Session, d.SessionId, path.Element)
 	el, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		log.Printf("Find element request: %+v", err)
@@ -41,12 +41,12 @@ func (s *Session) FindElement(by, value string) (element.WebElement, error) {
 	id := selenium.ElementID(res.Value)
 
 	return &element.Element{
-		SessionId: s.Id,
+		SessionId: d.SessionId,
 		Id:        id,
 	}, nil
 }
 
-func (s *Session) FindElements(by, value string) (element.WebElements, error) {
+func (d Driver) FindElements(by, value string) (element.WebElements, error) {
 	data, err := json.Marshal(&element.FindUsing{
 		Using: by,
 		Value: value,
@@ -56,7 +56,7 @@ func (s *Session) FindElements(by, value string) (element.WebElements, error) {
 		return nil, err
 	}
 
-	url := path.UrlArgs(path.Session, s.Id, path.Elements)
+	url := path.UrlArgs(path.Session, d.SessionId, path.Elements)
 	el, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		log.Printf("Find elements request: %+v", err)
@@ -75,14 +75,14 @@ func (s *Session) FindElements(by, value string) (element.WebElements, error) {
 	}
 
 	return &element.Elements{
-		SessionId: s.Id,
+		SessionId: d.SessionId,
 		Ids:       els,
 	}, nil
 }
 
 // Init
-func (s *Session) Init(by, val string) element.WebElement {
-	el, err := s.FindElement(by, val)
+func (d Driver) Init(by, val string) element.WebElement {
+	el, err := d.FindElement(by, val)
 	if err != nil {
 		log.Println("unable to find element", err, by, val)
 		return nil

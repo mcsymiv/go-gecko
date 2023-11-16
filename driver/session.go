@@ -1,4 +1,4 @@
-package session
+package driver
 
 import (
 	"encoding/json"
@@ -28,20 +28,19 @@ type WebDriver interface {
 	ExecuteScriptSync(s string, args ...interface{}) (interface{}, error)
 	PageSource() (string, error)
 	IsPageLoaded()
-  SwitchFrame(element.WebElement) error
+	SwitchFrame(element.WebElement) error
 }
 
 type BrowserCapabilities interface {
 	ImplilcitWait(w float32)
 }
 
-// Session
 // Represents WebDriver
 // Holds session Id
 // Driver port
-type Session struct {
-	Id   string
-	Port string
+type Driver struct {
+	SessionId string
+	Port      string
 }
 
 // Status response
@@ -72,8 +71,8 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 	var cmdArgs []string = driverCommand(c)
 	log.Println(cmdArgs)
 
- // todo
- // create http client with set port
+	// todo
+	// create http client with set port
 
 	// Start Firefox webdriver proxy - GeckoDriver
 	// Redirects gecko proxy output to stdout and stderr
@@ -84,7 +83,7 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 	err := cmd.Start()
 	if err != nil {
 		log.Println("Failed to start driver:", err)
-		return &Session{}, cmd
+		return &Driver{}, cmd
 	}
 
 	// Tries to get driver status for 2 seconds
@@ -102,18 +101,18 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 		}
 	}
 
-	s := startSession(&c)
-	if s == nil {
-		log.Fatal("Unable to start session", s)
+	d := startSession(&c)
+	if d == nil {
+		log.Fatal("Unable to start session", d)
 	}
 
-	return &Session{
-		Id: s.SessionId,
+	return &Driver{
+		SessionId: d.SessionId,
 	}, cmd
 }
 
 // initDriver
-// Return NewSessionResponce with session Id
+// Return NewSessionResponse with session Id
 func startSession(c *capabilities.NewSessionCapabilities) *NewSessionResponse {
 	data, err := json.Marshal(c)
 	if err != nil {
@@ -177,6 +176,6 @@ func GetStatus() (*Status, error) {
 	return &reply.Value, nil
 }
 
-func (s *Session) Quit() {
-	request.Do(http.MethodDelete, path.UrlArgs(path.Session, s.Id), nil)
+func (d Driver) Quit() {
+	request.Do(http.MethodDelete, path.UrlArgs(path.Session, d.SessionId), nil)
 }
