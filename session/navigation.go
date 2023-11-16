@@ -2,10 +2,12 @@ package session
 
 import (
 	"encoding/json"
-	"github.com/mcsymiv/go-gecko/path"
-	"github.com/mcsymiv/go-gecko/request"
 	"log"
 	"net/http"
+
+	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/path"
+	"github.com/mcsymiv/go-gecko/request"
 )
 
 // Open
@@ -20,7 +22,7 @@ func (s *Session) Open(u string) error {
 	}
 
 	url := path.UrlArgs(path.Session, s.Id, path.UrlPath)
-  log.Println("url", url)
+	log.Println("url", url)
 	rr, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		log.Printf("Open request error: %+v", err)
@@ -33,18 +35,15 @@ func (s *Session) Open(u string) error {
 		return err
 	}
 
-
-  
-
 	return nil
 }
 
 // IsPageLoaded
 // TODO
-// Should validate if page is fully loaded 
+// Should validate if page is fully loaded
 // And block test execution until true
 func (s *Session) IsPageLoaded() {
-  load := `
+	load := `
     function load() {
       if (document.readyState === "complete") {
         return true
@@ -57,20 +56,20 @@ func (s *Session) IsPageLoaded() {
     }
     return load()
   `
-  res, err := s.ExecuteScriptSync(load)
-  if err != nil {
-    log.Println("Page load script error", err)
-  }
+	res, err := s.ExecuteScriptSync(load)
+	if err != nil {
+		log.Println("Page load script error", err)
+	}
 
-  if res.(bool) {
-    return
-  }
+	if res.(bool) {
+		return
+	}
 
-  for {
-    if res, _ = s.ExecuteScriptSync(load); res != nil && res.(bool) {
-      break
-    }
-  }
+	for {
+		if res, _ = s.ExecuteScriptSync(load); res != nil && res.(bool) {
+			break
+		}
+	}
 }
 
 // GetUrl
@@ -89,4 +88,31 @@ func (s *Session) GetUrl() (string, error) {
 	}
 
 	return val.Value, nil
+}
+
+func (s Session) SwitchFrame(e element.WebElement) error {
+	url := path.UrlArgs(path.Session, s.Id, path.SwitchFrame)
+	param := map[string]int{
+		"id": 0,
+	}
+	data, err := json.Marshal(param)
+	if err != nil {
+		log.Println("Switch frame marshal error", err)
+		return err
+	}
+
+	rr, err := request.Do(http.MethodPost, url, data)
+	if err != nil {
+		log.Println("Switch frame request error", err)
+		return err
+	}
+
+	val := new(struct{ Value map[string]interface{} })
+	err = json.Unmarshal(rr, val)
+	if err != nil {
+		log.Printf("Switch frame error on unmarshal: %+v", err)
+		return nil
+	}
+
+	return nil
 }
