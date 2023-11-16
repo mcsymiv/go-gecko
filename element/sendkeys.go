@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
 )
 
@@ -68,7 +67,7 @@ const (
 )
 
 func (e *Element) SendKeys(s string) error {
-	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Value)
+	url := request.UrlArgs(request.Session, e.SessionId, request.Element, e.Id, request.Value)
 	k := &SendKeys{
 		Text: s,
 	}

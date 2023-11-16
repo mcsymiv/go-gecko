@@ -1,12 +1,12 @@
 package e2e
 
 import (
+	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/element"
-	"github.com/mcsymiv/go-gecko/session"
 )
 
 type HomePage struct {
-	session session.WebDriver
+	session driver.WebDriver
 
 	ab     element.WebElement
 	ABPage ABPage
@@ -16,12 +16,12 @@ type ABPage struct {
 	title element.WebElement
 }
 
-func NewHomePage(s session.WebDriver) *HomePage {
-	s.Open("https://the-internet.herokuapp.com/")
+func NewHomePage(d driver.WebDriver) *HomePage {
+	d.Open("https://the-internet.herokuapp.com/")
 
 	return &HomePage{
-		session: s,
-		ab:      s.Init(element.ByCssSelector, "#content li a"),
+		session: d,
+		ab:      d.Init(element.ByCssSelector, "#content li a"),
 	}
 }
 

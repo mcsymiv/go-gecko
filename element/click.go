@@ -5,12 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
 )
 
 func (e *Element) Click() error {
-	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Click)
+	url := request.UrlArgs(request.Session, e.SessionId, request.Element, e.Id, request.Click)
 	data, err := json.Marshal(&Empty{})
 	if err != nil {
 		log.Printf("Error on empty click marshal: %+v", err)

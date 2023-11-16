@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/mcsymiv/go-gecko/element"
-	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
 )
 
@@ -21,7 +20,7 @@ func (d Driver) Open(u string) error {
 		return err
 	}
 
-	url := path.UrlArgs(path.Session, d.SessionId, path.UrlPath)
+	url := request.UrlArgs(request.Session, d.SessionId, request.UrlPath)
 	log.Println("url", url)
 	rr, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
@@ -74,7 +73,7 @@ func (d Driver) IsPageLoaded() {
 
 // GetUrl
 func (d Driver) GetUrl() (string, error) {
-	url := path.UrlArgs(path.Session, d.SessionId, path.UrlPath)
+	url := request.UrlArgs(request.Session, d.SessionId, request.UrlPath)
 	rr, err := request.Do(http.MethodGet, url, nil)
 	if err != nil {
 		log.Printf("Open request error: %+v", err)
@@ -91,7 +90,7 @@ func (d Driver) GetUrl() (string, error) {
 }
 
 func (d Driver) SwitchFrame(e element.WebElement) error {
-	url := path.UrlArgs(path.Session, d.SessionId, path.SwitchFrame)
+	url := request.UrlArgs(request.Session, d.SessionId, request.SwitchFrame)
 	param := map[string]int{
 		"id": 0,
 	}

@@ -5,12 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
 )
 
 func (d Driver) PageSource() (string, error) {
-	url := path.UrlArgs(path.Session, d.SessionId, path.PageSource)
+	url := request.UrlArgs(request.Session, d.SessionId, request.PageSource)
 
 	rr, err := request.Do(http.MethodGet, url, nil)
 	if err != nil {
@@ -41,7 +40,7 @@ func (d Driver) ExecuteScriptSync(script string, args ...interface{}) (interface
 		return nil, err
 	}
 
-	url := path.UrlArgs(path.Session, d.SessionId, path.Execute, path.ScriptSync)
+	url := request.UrlArgs(request.Session, d.SessionId, request.Execute, request.ScriptSync)
 	res, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		log.Println("Exec script request error", err)

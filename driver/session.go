@@ -12,7 +12,6 @@ import (
 	"github.com/mcsymiv/go-gecko/element"
 
 	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
 )
 
@@ -57,8 +56,8 @@ type NewSessionResponse struct {
 	Capabilities map[string]interface{} `json:"-"`
 }
 
-var GeckoDriverPath string = "/Users/mcs/Development/tools/geckodriver"
-var ChromeDriverPath string = "/Users/mcs/Development/tools/chromedriver"
+var GeckoDriverrequest string = "/Users/mcs/Development/tools/geckodriver"
+var ChromeDriverrequest string = "/Users/mcs/Development/tools/chromedriver"
 
 func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 
@@ -78,7 +77,7 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 	// Redirects gecko proxy output to stdout and stderr
 	// Into projects logs directory
 	// Previously used line to start driver
-	// cmd := exec.Command("zsh", "-c", GeckoDriverPath, "--port", "4444", ">", "logs/gecko.session.logs", "2>&1", "&")
+	// cmd := exec.Command("zsh", "-c", GeckoDriverrequest, "--port", "4444", ">", "logs/gecko.session.logs", "2>&1", "&")
 	cmd := exec.Command("/bin/zsh", cmdArgs...)
 	err := cmd.Start()
 	if err != nil {
@@ -119,7 +118,7 @@ func startSession(c *capabilities.NewSessionCapabilities) *NewSessionResponse {
 		log.Printf("New driver marshall error: %+v", err)
 		return nil
 	}
-	url := path.Url(path.Session)
+	url := request.Url(request.Session)
 	rr, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		log.Printf("New driver error request: %+v", err)
@@ -144,9 +143,9 @@ func driverCommand(cap capabilities.NewSessionCapabilities) []string {
 	}
 
 	if cap.Capabilities.AlwaysMatch.BrowserName == "firefox" {
-		cmdArgs = append(cmdArgs, GeckoDriverPath, "--port", "4444")
+		cmdArgs = append(cmdArgs, GeckoDriverrequest, "--port", "4444")
 	} else {
-		cmdArgs = append(cmdArgs, ChromeDriverPath)
+		cmdArgs = append(cmdArgs, ChromeDriverrequest)
 	}
 
 	cmdArgs = append(cmdArgs, ">", "logs/session.log", "2>&1", "&")
@@ -160,7 +159,7 @@ func driverCommand(cap capabilities.NewSessionCapabilities) []string {
 // but may additionally include arbitrary meta information
 // that is specific to the implementation.
 func GetStatus() (*Status, error) {
-	url := path.Url(path.Status)
+	url := request.Url(request.Status)
 	rr, err := request.Do(http.MethodGet, url, nil)
 	if err != nil {
 		log.Println("Status request error", err)
@@ -177,5 +176,5 @@ func GetStatus() (*Status, error) {
 }
 
 func (d Driver) Quit() {
-	request.Do(http.MethodDelete, path.UrlArgs(path.Session, d.SessionId), nil)
+	request.Do(http.MethodDelete, request.UrlArgs(request.Session, d.SessionId), nil)
 }

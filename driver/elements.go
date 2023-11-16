@@ -2,12 +2,11 @@ package driver
 
 import (
 	"encoding/json"
-	"github.com/mcsymiv/go-gecko/request"
 	"log"
 	"net/http"
 
 	"github.com/mcsymiv/go-gecko/element"
-	"github.com/mcsymiv/go-gecko/path"
+	"github.com/mcsymiv/go-gecko/request"
 	"github.com/mcsymiv/go-gecko/selenium"
 )
 
@@ -24,7 +23,7 @@ func (d Driver) FindElement(by, value string) (element.WebElement, error) {
 		return nil, err
 	}
 
-	url := path.UrlArgs(path.Session, d.SessionId, path.Element)
+	url := request.UrlArgs(request.Session, d.SessionId, request.Element)
 	el, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		log.Printf("Find element request: %+v", err)
@@ -56,7 +55,7 @@ func (d Driver) FindElements(by, value string) (element.WebElements, error) {
 		return nil, err
 	}
 
-	url := path.UrlArgs(path.Session, d.SessionId, path.Elements)
+	url := request.UrlArgs(request.Session, d.SessionId, request.Elements)
 	el, err := request.Do(http.MethodPost, url, data)
 	if err != nil {
 		log.Printf("Find elements request: %+v", err)

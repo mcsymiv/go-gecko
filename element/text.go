@@ -5,14 +5,13 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/mcsymiv/go-gecko/path"
 	"github.com/mcsymiv/go-gecko/request"
 )
 
 // Text
 // Returns an element’s text “as rendered”
 func (e *Element) Text() (string, error) {
-	url := path.UrlArgs(path.Session, e.SessionId, path.Element, e.Id, path.Text)
+	url := request.UrlArgs(request.Session, e.SessionId, request.Element, e.Id, request.Text)
 	r, err := request.Do(http.MethodGet, url, nil)
 	if err != nil {
 		log.Printf("Get text: %+v", err)
