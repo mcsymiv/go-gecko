@@ -126,11 +126,11 @@ func TestDownload(t *testing.T) {
 	time.Sleep(2 * time.Second)
 	st.FindCss("[data-tab-title='Allure Report']").Element().Click()
 	time.Sleep(15 * time.Second)
-  allureFrame := st.FindX(".//iframe").Element()
+	allureFrame := st.FindX(".//iframe").Element()
 
-  d.SwitchFrame(allureFrame)
-  d.SwitchFrame(allureFrame)
+	d.SwitchFrame(allureFrame)
+	d.SwitchFrame(allureFrame)
 
-  st.FindX(".//ul[@class='side-nav__menu']//div[text()='Suites']").Element().Click()
+	st.FindX(".//ul[@class='side-nav__menu']//div[text()='Suites']").Element().Click()
 	time.Sleep(2 * time.Second)
 }
