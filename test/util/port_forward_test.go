@@ -68,7 +68,7 @@ func loadEnv() {
 func TestPortForward(t *testing.T) {
 	loadEnv()
 
-	d, tear := hooks.StartDriver()
+	d, tear := hooks.Driver()
 	defer tear()
 
 	d.Open("http://192.168.0.1")

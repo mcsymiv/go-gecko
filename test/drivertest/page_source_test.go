@@ -7,7 +7,7 @@ import (
 
 func TestPageSource(t *testing.T) {
 
-	d, tear := hooks.StartDriver()
+	d, tear := hooks.Driver()
 	defer tear()
 
 	d.Open("https://the-internet.herokuapp.com/")

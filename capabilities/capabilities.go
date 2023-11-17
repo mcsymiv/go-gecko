@@ -1,6 +1,8 @@
 package capabilities
 
-type NewSessionCapabilities struct {
+type Capabilities struct {
+	Port         string              `json:"-"`
+	Host         string              `json:"-"`
 	Capabilities BrowserCapabilities `json:"capabilities"`
 }
 
@@ -45,12 +47,18 @@ type MozOptions struct {
 //
 // Example:
 // Create driver.New(browserName("chrome"))
-type CapabilitiesFunc func(*NewSessionCapabilities)
+type CapabilitiesFunc func(*Capabilities)
 
 // DefaultCapabilities
-func DefaultCapabilities() NewSessionCapabilities {
-	return NewSessionCapabilities{
-		BrowserCapabilities{
+// Sets default firefox browser with local dev url
+// With defined in service port, i.e. :4444
+// Port and Host fields are used and passed to the WebDriver instance
+// To reference and build current driver url
+func DefaultCapabilities() Capabilities {
+	return Capabilities{
+		Port: ":4444",
+		Host: "http://localhost",
+		Capabilities: BrowserCapabilities{
 			AlwaysMatch{
 				AcceptInsecureCerts: true,
 				BrowserName:         "firefox",
@@ -59,32 +67,32 @@ func DefaultCapabilities() NewSessionCapabilities {
 	}
 }
 
-// Capabilities
-func Capabilities(browsername string) NewSessionCapabilities {
-	return NewSessionCapabilities{
-		BrowserCapabilities{
-			AlwaysMatch{
-				AcceptInsecureCerts: true,
-				BrowserName:         browsername,
-			},
-		},
-	}
-}
-
 func ImplicitWait(w float32) CapabilitiesFunc {
-	return func(cap *NewSessionCapabilities) {
+	return func(cap *Capabilities) {
 		cap.Capabilities.AlwaysMatch.Timeouts.Implicit = w
 	}
 }
 
 func Firefox(moz *MozOptions) CapabilitiesFunc {
-	return func(cap *NewSessionCapabilities) {
+	return func(cap *Capabilities) {
 		cap.Capabilities.AlwaysMatch.MozOptions = *moz
 	}
 }
 
 func BrowserName(b string) CapabilitiesFunc {
-  return func(cap *NewSessionCapabilities) {
-    cap.Capabilities.AlwaysMatch.BrowserName = b
-  }
+	return func(cap *Capabilities) {
+		cap.Capabilities.AlwaysMatch.BrowserName = b
+	}
+}
+
+func Port(p string) CapabilitiesFunc {
+	return func(caps *Capabilities) {
+		caps.Port = p
+	}
+}
+
+func Host(h string) CapabilitiesFunc {
+	return func(caps *Capabilities) {
+		caps.Host = h
+	}
 }

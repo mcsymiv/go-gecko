@@ -1,21 +1,20 @@
 package drivertest
 
 import (
+	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/hooks"
 	"testing"
 	"time"
-
-	"github.com/mcsymiv/go-gecko/element"
 )
 
 func TestSendKeys(t *testing.T) {
 
-	d, tear := hooks.StartDriver()
+	d, tear := hooks.Driver()
 	defer tear()
 
 	d.Open("https://www.google.com")
 
-	el, err := d.FindElement(element.ByCssSelector, "#APjFqb")
+	el, err := d.FindElement(driver.ByCssSelector, "#APjFqb")
 	if err != nil {
 		t.Errorf("Element not found: %+v", err)
 	}

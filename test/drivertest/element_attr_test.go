@@ -1,19 +1,19 @@
 package drivertest
 
 import (
-	"github.com/mcsymiv/go-gecko/element"
+	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/hooks"
 	"log"
 	"testing"
 )
 
 func TestElementAttribute(t *testing.T) {
-	d, tear := hooks.StartDriver()
+	d, tear := hooks.Driver()
 	defer tear()
 
 	d.Open("https://the-internet.herokuapp.com/")
 
-	el, err := d.FindElement(element.ByLinkText, "Typos")
+	el, err := d.FindElement(driver.ByLinkText, "Typos")
 	if err != nil {
 		log.Fatal("find element", err)
 	}

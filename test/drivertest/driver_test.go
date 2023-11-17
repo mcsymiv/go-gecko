@@ -12,9 +12,9 @@ import (
 func TestNewDriver(t *testing.T) {
 
 	// Connect to the WebDriver instance running locally
-	d, cmd := driver.NewDriver(capabilities.ImplicitWait(3000))
+	d := driver.NewDriver(capabilities.ImplicitWait(3000))
 
-	defer cmd.Process.Kill()
+	defer d.Service().Process.Kill()
 	defer d.Quit()
 }
 
@@ -28,12 +28,12 @@ func TestNewHeadlessDriver(t *testing.T) {
 	}
 
 	// Connect to the WebDriver instance running locally
-	d, cmd := driver.NewDriver(
+	d := driver.NewDriver(
 		capabilities.ImplicitWait(3000),
 		capabilities.Firefox(moz),
 	)
 
 	// LIFO defer stack to quit firefox, and then kill driver proc
-	defer cmd.Process.Kill()
+	defer d.Service().Process.Kill()
 	defer d.Quit()
 }

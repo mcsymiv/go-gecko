@@ -1,20 +1,19 @@
 package drivertest
 
 import (
+	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/hooks"
 	"testing"
-
-	"github.com/mcsymiv/go-gecko/element"
 )
 
 func TestFindElement(t *testing.T) {
 
-	d, tear := hooks.StartDriver()
+	d, tear := hooks.Driver()
 	defer tear()
 
 	d.Open("https://the-internet.herokuapp.com/")
 
-	el, err := d.FindElement(element.ByLinkText, "A/B Testing")
+	el, err := d.FindElement(driver.ByLinkText, "A/B Testing")
 	if err != nil {
 		t.Errorf("Unable to find element: %+v", err)
 	}
@@ -27,12 +26,12 @@ func TestFindElement(t *testing.T) {
 
 func TestFindElements(t *testing.T) {
 
-	d, tear := hooks.StartDriver()
+	d, tear := hooks.Driver()
 	defer tear()
 
 	d.Open("https://the-internet.herokuapp.com/")
 
-	els, err := d.FindElements(element.ByCssSelector, "#content li a")
+	els, err := d.FindElements(driver.ByCssSelector, "#content li a")
 	if err != nil {
 		t.Errorf("Unable to find element: %+v", err)
 	}

@@ -8,7 +8,7 @@ import (
 
 func TestOpenUrl(t *testing.T) {
 
-	d, tear := hooks.StartDriver()
+	d, tear := hooks.Driver()
 	defer tear()
 
 	err := d.Open("https://the-internet.herokuapp.com/")

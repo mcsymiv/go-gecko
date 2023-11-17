@@ -1,15 +1,14 @@
 package drivertest
 
 import (
+	"github.com/mcsymiv/go-gecko/driver"
 	"github.com/mcsymiv/go-gecko/hooks"
 	"testing"
-
-	"github.com/mcsymiv/go-gecko/element"
 )
 
 func TestExecuteScriptSync(t *testing.T) {
 
-	d, tear := hooks.StartDriver()
+	d, tear := hooks.Driver()
 	defer tear()
 
 	d.Open("https://the-internet.herokuapp.com/")
@@ -19,7 +18,7 @@ func TestExecuteScriptSync(t *testing.T) {
 		t.Errorf("Failed script: %+v", err)
 	}
 
-	el, err := d.FindElement(element.ByLinkText, "Elemental Selenium")
+	el, err := d.FindElement(driver.ByLinkText, "Elemental Selenium")
 	if err != nil {
 		t.Errorf("Failed find el: %+v:", err)
 	}
