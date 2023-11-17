@@ -71,27 +71,30 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) WebDriver {
 	}
 }
 
-func (d *Driver) Quit() {
-	request.Do(http.MethodDelete, request.UrlArgs(request.Session, d.Session.SessionId), nil)
-}
-
 func (d *Driver) Service() *exec.Cmd {
 	return d.ServiceCmd
+}
+
+func (d *Driver) Quit() {
+	url := FormatActiveSessionUrl(d)
+	res, err := MakeRequest(Url(url), Method(http.MethodDelete))
+	if err != nil {
+		log.Printf("Error quit request: %+v", err)
+	}
+	log.Printf("Quit response: %+v", string(res))
+	//request.Do(http.MethodDelete, request.UrlArgs(request.Session, d.Session.SessionId), nil)
 }
 
 // Open
 // Goes to url
 func (d *Driver) Open(u string) error {
-	url := FormatActiveSessionUrl("url", d)
+	url := FormatActiveSessionUrl(d, "url")
 
 	data, _ := json.Marshal(map[string]string{
 		"url": u,
 	})
 
-	response, err := MakeRequest(
-		Url(url),
-		Method(http.MethodPost),
-		Payload(data))
+	response, err := MakeRequest(Url(url), Method(http.MethodPost), Payload(data))
 	if err != nil {
 		log.Printf("Error make request: %+v", err)
 		return err

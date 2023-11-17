@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type RequestOptions struct {
@@ -96,12 +97,23 @@ func MakeRequest(options ...RequestOption) ([]byte, error) {
 }
 
 // FormatActiveSessionUrl
-func FormatActiveSessionUrl(url string, d *Driver) string {
-	return fmt.Sprintf("%s%s/session/%s/%s",
+// Return fully format driver url
+// When active session is running
+// TODO: add/update func to handle other driver endpoints
+func FormatActiveSessionUrl(d *Driver, args ...string) string {
+
+	// 1st todo: adds check for args len,
+	// if any, appends "/endpoint" like string
+	// to active session
+	var appendedArgs string
+	if len(args) != 0 {
+		appendedArgs = fmt.Sprintf("/%s", strings.Join(args, "/"))
+	}
+	return fmt.Sprintf("%s%s/session/%s%s",
 		d.Capabilities.Host,
 		d.Capabilities.Port,
 		d.Session.SessionId,
-		url,
+		appendedArgs,
 	)
 }
 
