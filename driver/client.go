@@ -2,6 +2,7 @@ package driver
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -11,34 +12,50 @@ import (
 )
 
 type RequestOptions struct {
+	Client  *http.Client
 	Method  string
 	Url     string
 	Payload []byte
 	Headers map[string]string
 }
 
-type RequestOption func(*RequestOptions)
+type RequestOptionFunc func(*RequestOptions)
 
-func Method(method string) RequestOption {
+func WithMethod(method string) RequestOptionFunc {
 	return func(ro *RequestOptions) {
 		ro.Method = method
 	}
 }
 
-func Url(url string) RequestOption {
+func WithUrl(url string) RequestOptionFunc {
 	return func(ro *RequestOptions) {
 		ro.Url = url
 	}
 }
 
-func Payload(payload []byte) RequestOption {
+func WithPayload(payload []byte) RequestOptionFunc {
 	return func(ro *RequestOptions) {
 		ro.Payload = payload
 	}
 }
 
+// Client
+// Request option to set new http client
+// Can be used to perform API calls in test
+func Client(client *http.Client) RequestOptionFunc {
+	return func(ro *RequestOptions) {
+		ro.Client = client
+	}
+}
+
 func DefaultRequestOptions() RequestOptions {
 	return RequestOptions{
+		Client: &http.Client{
+			Transport: &LoggingRoundTripper{
+				next:   http.DefaultTransport,
+				logger: log.New(os.Stdout, "[info]\t", log.Ldate|log.Ltime),
+			},
+		},
 		Method:  http.MethodGet,
 		Url:     "http://localhost:4444",
 		Payload: nil,
@@ -48,39 +65,37 @@ func DefaultRequestOptions() RequestOptions {
 	}
 }
 
-func MakeRequest(options ...RequestOption) ([]byte, error) {
+func (d *Driver) MakeRequest(options ...RequestOptionFunc) ([]byte, error) {
 	// Default options
-	requestOptions := DefaultRequestOptions()
-	log.Printf("Default req options: %+v", requestOptions)
+	if d.RequestOptions == nil {
+		ro := DefaultRequestOptions()
+		d.RequestOptions = &ro
+		return nil, errors.New("error driver Request options is not set")
+	}
 
 	// Apply provided options
 	for _, option := range options {
-		option(&requestOptions)
+		option(d.RequestOptions)
 	}
 
-	log.Printf("Req options: %+v", requestOptions)
-
 	req, err := http.NewRequest(
-		requestOptions.Method,
-		requestOptions.Url,
-		bytes.NewBuffer(requestOptions.Payload),
+		d.RequestOptions.Method,
+		d.RequestOptions.Url,
+		bytes.NewBuffer(d.RequestOptions.Payload),
 	)
 	if err != nil {
 		log.Printf("Error creating request: %+v", err)
 		return nil, err
 	}
 
-	req.Header.Add("Accept", "json/application")
+	// Apply headers from req options
+	for k, v := range d.RequestOptions.Headers {
+		req.Header.Add(k, v)
+	}
 
 	// Wrapper for RoundTripper Transport
 	// Sets local logger for each request/response cycle
-	c := &http.Client{
-		Transport: &LoggingRoundTripper{
-			next:   http.DefaultTransport,
-			logger: log.New(os.Stdout, "[info]\t", log.Ldate|log.Ltime),
-		},
-	}
-	res, err := c.Do(req)
+	res, err := d.RequestOptions.Client.Do(req)
 	if err != nil {
 		log.Println("Error perform request:", err)
 	}

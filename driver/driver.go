@@ -24,13 +24,21 @@ type WebDriver interface {
 	IsPageLoaded()
 	SwitchFrame(WebElement) error
 
+	// Service util function
+	// To stop/kill local driver process
 	Service() *exec.Cmd
+
+	// MakeRequest
+	// Performs API request on driver
+	// TODO: Can be adjusted to make custom API calls if exposed correctly
+	MakeRequest(options ...RequestOptionFunc) ([]byte, error)
 }
 
 type Driver struct {
-	Session      *service.Session
-	ServiceCmd   *exec.Cmd
-	Capabilities *capabilities.Capabilities
+	RequestOptions *RequestOptions
+	Session        *service.Session
+	ServiceCmd     *exec.Cmd
+	Capabilities   *capabilities.Capabilities
 }
 
 func NewDriver(capsFn ...capabilities.CapabilitiesFunc) WebDriver {
@@ -64,10 +72,13 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) WebDriver {
 		log.Fatal("Unable to start session", s)
 	}
 
+	ro := DefaultRequestOptions()
+
 	return &Driver{
-		Session:      s,
-		ServiceCmd:   cmd,
-		Capabilities: &caps,
+		RequestOptions: &ro,
+		Session:        s,
+		ServiceCmd:     cmd,
+		Capabilities:   &caps,
 	}
 }
 
@@ -77,7 +88,7 @@ func (d *Driver) Service() *exec.Cmd {
 
 func (d *Driver) Quit() {
 	url := FormatActiveSessionUrl(d)
-	res, err := MakeRequest(Url(url), Method(http.MethodDelete))
+	res, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodDelete))
 	if err != nil {
 		log.Printf("Error quit request: %+v", err)
 	}
@@ -94,7 +105,7 @@ func (d *Driver) Open(u string) error {
 		"url": u,
 	})
 
-	response, err := MakeRequest(Url(url), Method(http.MethodPost), Payload(data))
+	response, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodPost), WithPayload(data))
 	if err != nil {
 		log.Printf("Error make request: %+v", err)
 		return err
