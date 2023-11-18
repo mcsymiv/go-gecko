@@ -52,9 +52,6 @@ func TestDriverWithExternalApiCall(t *testing.T) {
 	// Connect to the WebDriver instance running locally
 	d, tear := hooks.Driver(
 		capabilities.ImplicitWait(3000),
-		// chrome caps commented out by design
-		// capabilities.BrowserName("chrome"),
-		// capabilities.Port(":9515"),
 	)
 	defer tear()
 
