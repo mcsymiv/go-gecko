@@ -1,6 +1,8 @@
 package capabilities
 
 type Capabilities struct {
+	Port         string              `json:"-"`
+	Host         string              `json:"-"`
 	Capabilities BrowserCapabilities `json:"capabilities"`
 }
 
@@ -48,9 +50,15 @@ type MozOptions struct {
 type CapabilitiesFunc func(*Capabilities)
 
 // DefaultCapabilities
+// Sets default firefox browser with local dev url
+// With defined in service port, i.e. :4444
+// Port and Host fields are used and passed to the WebDriver instance
+// To reference and build current driver url
 func DefaultCapabilities() Capabilities {
 	return Capabilities{
-		BrowserCapabilities{
+		Port: ":4444",
+		Host: "http://localhost",
+		Capabilities: BrowserCapabilities{
 			AlwaysMatch{
 				AcceptInsecureCerts: true,
 				BrowserName:         "firefox",
@@ -74,5 +82,17 @@ func Firefox(moz *MozOptions) CapabilitiesFunc {
 func BrowserName(b string) CapabilitiesFunc {
 	return func(cap *Capabilities) {
 		cap.Capabilities.AlwaysMatch.BrowserName = b
+	}
+}
+
+func Port(p string) CapabilitiesFunc {
+	return func(caps *Capabilities) {
+		caps.Port = p
+	}
+}
+
+func Host(h string) CapabilitiesFunc {
+	return func(caps *Capabilities) {
+		caps.Host = h
 	}
 }
