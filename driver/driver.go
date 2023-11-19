@@ -3,7 +3,6 @@ package driver
 import (
 	"github.com/mcsymiv/go-gecko/capabilities"
 	"github.com/mcsymiv/go-gecko/service"
-	"io"
 	"log"
 	"net/http"
 	"os/exec"
@@ -16,49 +15,13 @@ type WebDriver interface {
 	Open(u string) (WebDriverResponse, error)
 	GetUrl() (WebDriverResponse, error)
 	Quit()
-
-	// FindElement
-	// Finds element based upon w3c 'using' selectors
-	// Not all using WebElement constants are supported
-	// Pay attention to 'By...' comments
-	FindElement(b, v string) (WebElementResponse, error)
-	FindElements(b, v string) (WebElements, error)
-
-	// Service util function
-	// To stop/kill local driver process
-	Service() *exec.Cmd
-
-	// MakeRequest
-	// Performs API request on driver
-	// TODO: Can be adjusted to make custom API calls if exposed correctly
-	MakeRequest(options ...RequestOptionFunc) ([]byte, error)
-}
-
-type WebDriverResponse interface {
-	GetValue() interface{}
-}
-
-type WebElementResponse interface {
-	//GetElementId() interface{}
-}
-
-// WebDriverStrategy interface
-type WebDriverStrategy interface {
-	Execute(*http.Client, *http.Request) (WebDriverResponse, error)
-}
-
-type WebElementStrategy interface {
-	Execute(*http.Client, *http.Request) (WebElementResponse, error)
 }
 
 type Driver struct {
-	RequestOptions *RequestOptions
-	Session        *service.Session
-	ServiceCmd     *exec.Cmd
-	Capabilities   *capabilities.Capabilities
-
-	WebDriverStrategy
-	WebElementStrategy
+	Client       *http.Client
+	Session      *service.Session
+	Service      *exec.Cmd
+	Capabilities *capabilities.Capabilities
 }
 
 func NewDriver(capsFn ...capabilities.CapabilitiesFunc) WebDriver {
@@ -95,36 +58,9 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) WebDriver {
 	ro := DefaultRequestOptions()
 
 	return &Driver{
-		RequestOptions: &ro,
-		Session:        s,
-		ServiceCmd:     cmd,
-		Capabilities:   &caps,
+		Client:       &http.Client{},
+		Session:      s,
+		ServiceCmd:   cmd,
+		Capabilities: &caps,
 	}
-}
-
-func (d *Driver) Service() *exec.Cmd {
-	return d.ServiceCmd
-}
-
-// MakeRequest
-// Wrapper function exposed on WebDriver to make external API calls
-// Uses private client.makeReq implementation
-func (d *Driver) MakeRequest(options ...RequestOptionFunc) ([]byte, error) {
-	return makeReq(d, options...)
-}
-
-func executeRequest(c *http.Client, req *http.Request) ([]byte, error) {
-	response, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Println("Error read response body:", err)
-		return nil, err
-	}
-
-	return body, nil
 }
