@@ -130,6 +130,7 @@ func (d *Driver) FindElement(by, value string) (WebElement, error) {
 	id := selenium.ElementID(res.Value)
 
 	return &Element{
+		Driver:    d,
 		SessionId: d.Session.SessionId,
 		Id:        id,
 	}, nil
@@ -164,6 +165,7 @@ func (d *Driver) FindElements(by, value string) (WebElements, error) {
 	}
 
 	return &Elements{
+		Driver:    d,
 		SessionId: d.Session.SessionId,
 		Ids:       els,
 	}, nil
@@ -174,6 +176,7 @@ func (e *Element) Click() error {
 	data, err := json.Marshal(&Empty{})
 	if err != nil {
 		log.Printf("Error on empty click marshal: %+v", err)
+		return err
 	}
 	rr, err := request.Do(http.MethodPost, url, data)
 	if err != nil {

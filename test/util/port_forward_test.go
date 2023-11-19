@@ -101,11 +101,12 @@ func TestDownload(t *testing.T) {
 	d, tear := hooks.Driver(
 		capabilities.ImplicitWait(10000),
 		capabilities.BrowserName("chrome"),
+		capabilities.Port(":9515"),
 	)
 	defer tear()
 
 	d.Open(os.Getenv("DOWNLOAD_URL"))
-	d.IsPageLoaded()
+	//d.IsPageLoaded()
 
 	st := step.New(d)
 	st.FindX(".//a[text()='Log in using Azure Active Directory']").Element().Click()

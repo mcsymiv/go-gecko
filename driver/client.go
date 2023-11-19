@@ -66,12 +66,15 @@ func DefaultRequestOptions() RequestOptions {
 }
 
 func (d *Driver) MakeRequest(options ...RequestOptionFunc) ([]byte, error) {
-	// Default options
+	// Default options set if none provided
 	if d.RequestOptions == nil {
 		ro := DefaultRequestOptions()
 		d.RequestOptions = &ro
 		return nil, errors.New("error driver Request options is not set")
 	}
+
+	// Clear payload from prev request
+	d.RequestOptions.Payload = nil
 
 	// Apply provided options
 	for _, option := range options {
@@ -93,8 +96,8 @@ func (d *Driver) MakeRequest(options ...RequestOptionFunc) ([]byte, error) {
 		req.Header.Add(k, v)
 	}
 
-	// Wrapper for RoundTripper Transport
-	// Sets local logger for each request/response cycle
+	// Uses Client with RoundTripper Transport Wrapper
+	// With Logger
 	res, err := d.RequestOptions.Client.Do(req)
 	if err != nil {
 		log.Println("Error perform request:", err)

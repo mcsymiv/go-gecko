@@ -88,32 +88,23 @@ func (d *Driver) Service() *exec.Cmd {
 
 func (d *Driver) Quit() {
 	url := FormatActiveSessionUrl(d)
-	res, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodDelete))
+	_, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodDelete))
 	if err != nil {
 		log.Printf("Error quit request: %+v", err)
 	}
-	log.Printf("Quit response: %+v", string(res))
-	//request.Do(http.MethodDelete, request.UrlArgs(request.Session, d.Session.SessionId), nil)
 }
 
 // Open
 // Goes to url
 func (d *Driver) Open(u string) error {
 	url := FormatActiveSessionUrl(d, "url")
-
 	data, _ := json.Marshal(map[string]string{
 		"url": u,
 	})
 
-	response, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodPost), WithPayload(data))
+	_, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodPost), WithPayload(data))
 	if err != nil {
 		log.Printf("Error make request: %+v", err)
-		return err
-	}
-
-	resData := new(struct{ Value []map[string]string })
-	if err := json.Unmarshal(response, &resData); err != nil {
-		log.Printf("Find element unmarshal: %+v", err)
 		return err
 	}
 
@@ -155,12 +146,13 @@ func (d *Driver) IsPageLoaded() {
 }
 
 func (d *Driver) GetUrl() (string, error) {
-	url := request.UrlArgs(request.Session, d.Session.SessionId, request.UrlPath)
-	rr, err := request.Do(http.MethodGet, url, nil)
+	url := FormatActiveSessionUrl(d, "url")
+	rr, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodGet))
 	if err != nil {
-		log.Printf("Open request error: %+v", err)
+		log.Printf("Error make request: %+v", err)
 		return "", err
 	}
+
 	val := new(struct{ Value string })
 	err = json.Unmarshal(rr, val)
 	if err != nil {
@@ -172,7 +164,7 @@ func (d *Driver) GetUrl() (string, error) {
 }
 
 func (d *Driver) SwitchFrame(e WebElement) error {
-	url := request.UrlArgs(request.Session, d.Session.SessionId, request.SwitchFrame)
+	url := FormatActiveSessionUrl(d, "frame")
 	param := map[string]int{
 		"id": 0,
 	}
@@ -182,9 +174,9 @@ func (d *Driver) SwitchFrame(e WebElement) error {
 		return err
 	}
 
-	rr, err := request.Do(http.MethodPost, url, data)
+	rr, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodPost), WithPayload(data))
 	if err != nil {
-		log.Println("Switch frame request error", err)
+		log.Printf("Error make request: %+v", err)
 		return err
 	}
 
@@ -221,6 +213,7 @@ func (d *Driver) ExecuteScriptSync(script string, args ...interface{}) (interfac
 		args = make([]interface{}, 0)
 	}
 
+	url := FormatActiveSessionUrl(d, "execute", "script")
 	data, err := json.Marshal(map[string]interface{}{
 		"script": script,
 		"args":   args,
@@ -230,10 +223,9 @@ func (d *Driver) ExecuteScriptSync(script string, args ...interface{}) (interfac
 		return nil, err
 	}
 
-	url := request.UrlArgs(request.Session, d.Session.SessionId, request.Execute, request.ScriptSync)
-	res, err := request.Do(http.MethodPost, url, data)
+	res, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodPost), WithPayload(data))
 	if err != nil {
-		log.Println("Exec script request error", err)
+		log.Printf("Error make request: %+v", err)
 		return nil, err
 	}
 
