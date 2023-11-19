@@ -18,7 +18,7 @@ func TestFindElement(t *testing.T) {
 		t.Errorf("Unable to find element: %+v", err)
 	}
 
-	id, err := el.ElementId()
+	id, err := el.Id()
 	if err != nil || id == "" {
 		t.Errorf("No element found: %s", id)
 	}

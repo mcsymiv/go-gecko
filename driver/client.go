@@ -65,7 +65,7 @@ func DefaultRequestOptions() RequestOptions {
 	}
 }
 
-func (d *Driver) MakeRequest(options ...RequestOptionFunc) ([]byte, error) {
+func makeReq(d *Driver, opts ...RequestOptionFunc) ([]byte, error) {
 	// Default options set if none provided
 	if d.RequestOptions == nil {
 		ro := DefaultRequestOptions()
@@ -77,7 +77,7 @@ func (d *Driver) MakeRequest(options ...RequestOptionFunc) ([]byte, error) {
 	d.RequestOptions.Payload = nil
 
 	// Apply provided options
-	for _, option := range options {
+	for _, option := range opts {
 		option(d.RequestOptions)
 	}
 
@@ -114,11 +114,11 @@ func (d *Driver) MakeRequest(options ...RequestOptionFunc) ([]byte, error) {
 	return body, nil
 }
 
-// FormatActiveSessionUrl
+// formatActiveSessionUrl
 // Return fully format driver url
 // When active session is running
 // TODO: add/update func to handle other driver endpoints
-func FormatActiveSessionUrl(d *Driver, args ...string) string {
+func formatActiveSessionUrl(d *Driver, args ...string) string {
 
 	// 1st todo: adds check for args len,
 	// if any, appends "/endpoint" like string

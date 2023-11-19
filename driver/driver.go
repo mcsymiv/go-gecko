@@ -3,7 +3,6 @@ package driver
 import (
 	"encoding/json"
 	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/request"
 	"github.com/mcsymiv/go-gecko/service"
 	"log"
 	"net/http"
@@ -87,8 +86,8 @@ func (d *Driver) Service() *exec.Cmd {
 }
 
 func (d *Driver) Quit() {
-	url := FormatActiveSessionUrl(d)
-	_, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodDelete))
+	url := formatActiveSessionUrl(d)
+	_, err := makeReq(d, WithMethod(http.MethodDelete), WithUrl(url))
 	if err != nil {
 		log.Printf("Error quit request: %+v", err)
 	}
@@ -97,12 +96,12 @@ func (d *Driver) Quit() {
 // Open
 // Goes to url
 func (d *Driver) Open(u string) error {
-	url := FormatActiveSessionUrl(d, "url")
+	url := formatActiveSessionUrl(d, "url")
 	data, _ := json.Marshal(map[string]string{
 		"url": u,
 	})
 
-	_, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodPost), WithPayload(data))
+	_, err := makeReq(d, WithMethod(http.MethodPost), WithUrl(url), WithPayload(data))
 	if err != nil {
 		log.Printf("Error make request: %+v", err)
 		return err
@@ -146,8 +145,8 @@ func (d *Driver) IsPageLoaded() {
 }
 
 func (d *Driver) GetUrl() (string, error) {
-	url := FormatActiveSessionUrl(d, "url")
-	rr, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodGet))
+	url := formatActiveSessionUrl(d, "url")
+	rr, err := makeReq(d, WithMethod(http.MethodGet), WithUrl(url))
 	if err != nil {
 		log.Printf("Error make request: %+v", err)
 		return "", err
@@ -164,7 +163,7 @@ func (d *Driver) GetUrl() (string, error) {
 }
 
 func (d *Driver) SwitchFrame(e WebElement) error {
-	url := FormatActiveSessionUrl(d, "frame")
+	url := formatActiveSessionUrl(d, "frame")
 	param := map[string]int{
 		"id": 0,
 	}
@@ -174,7 +173,7 @@ func (d *Driver) SwitchFrame(e WebElement) error {
 		return err
 	}
 
-	rr, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodPost), WithPayload(data))
+	rr, err := makeReq(d, WithMethod(http.MethodPost), WithUrl(url), WithPayload(data))
 	if err != nil {
 		log.Printf("Error make request: %+v", err)
 		return err
@@ -191,9 +190,8 @@ func (d *Driver) SwitchFrame(e WebElement) error {
 }
 
 func (d *Driver) PageSource() (string, error) {
-	url := request.UrlArgs(request.Session, d.Session.SessionId, request.PageSource)
-
-	rr, err := request.Do(http.MethodGet, url, nil)
+	url := formatActiveSessionUrl(d, "source")
+	rr, err := makeReq(d, WithMethod(http.MethodGet), WithUrl(url))
 	if err != nil {
 		log.Println("Page source request error", err)
 		return "", err
@@ -213,7 +211,7 @@ func (d *Driver) ExecuteScriptSync(script string, args ...interface{}) (interfac
 		args = make([]interface{}, 0)
 	}
 
-	url := FormatActiveSessionUrl(d, "execute", "script")
+	url := formatActiveSessionUrl(d, "execute", "script")
 	data, err := json.Marshal(map[string]interface{}{
 		"script": script,
 		"args":   args,
@@ -223,7 +221,7 @@ func (d *Driver) ExecuteScriptSync(script string, args ...interface{}) (interfac
 		return nil, err
 	}
 
-	res, err := d.MakeRequest(WithUrl(url), WithMethod(http.MethodPost), WithPayload(data))
+	res, err := makeReq(d, WithMethod(http.MethodPost), WithUrl(url), WithPayload(data))
 	if err != nil {
 		log.Printf("Error make request: %+v", err)
 		return nil, err
@@ -237,4 +235,11 @@ func (d *Driver) ExecuteScriptSync(script string, args ...interface{}) (interfac
 	}
 
 	return rr.Value, nil
+}
+
+// MakeRequest
+// Wrapper function exposed on WebDriver to make external API calls
+// Uses private client.makeReq implementation
+func (d *Driver) MakeRequest(options ...RequestOptionFunc) ([]byte, error) {
+	return makeReq(d, options...)
 }

@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/mcsymiv/go-gecko/request"
 	"github.com/mcsymiv/go-gecko/selenium"
 )
 
@@ -22,7 +21,7 @@ const (
 )
 
 type WebElement interface {
-	ElementId() (string, error)
+	Id() (string, error)
 	ElementIdentifier() map[string]string
 	Click() error
 	SendKeys(keys string) error
@@ -35,15 +34,15 @@ type WebElements interface {
 }
 
 type Element struct {
-	Driver    WebDriver
+	Driver    *Driver
 	SessionId string
-	Id        string
+	ElementId string
 }
 
 type Elements struct {
-	Driver    WebDriver
-	SessionId string
-	Ids       []string
+	Driver     *Driver
+	SessionId  string
+	ElementsId []string
 }
 
 type SendKeys struct {
@@ -61,14 +60,14 @@ type FindUsing struct {
 	Value string `json:"value"`
 }
 
-// ElementId
+// Id
 // Returns Element w3c id
 // Which is bound to the selenium.WebElementIdentifier
-func (e *Element) ElementId() (string, error) {
-	if e.Id == "" {
+func (e *Element) Id() (string, error) {
+	if e.ElementId == "" {
 		return "", fmt.Errorf("No id for element: %+v", e)
 	}
-	return e.Id, nil
+	return e.ElementId, nil
 }
 
 // ElementIdentifier
@@ -76,7 +75,7 @@ func (e *Element) ElementId() (string, error) {
 // For example: {"value": {"webElementIdentifier": "element-id"}}
 func (e *Element) ElementIdentifier() map[string]string {
 	return map[string]string{
-		selenium.WebElementIdentifier: e.Id,
+		selenium.WebElementIdentifier: e.ElementId,
 	}
 }
 
@@ -86,14 +85,14 @@ func (e *Element) ElementIdentifier() map[string]string {
 func (els *Elements) Elements() ([]WebElement, error) {
 	var wels []WebElement
 
-	if len(els.Ids) == 0 {
+	if len(els.ElementsId) == 0 {
 		return nil, fmt.Errorf("No element ids. Empty slice of web elements: %+v", els)
 	}
 
-	for _, el := range els.Ids {
+	for _, el := range els.ElementsId {
 		wels = append(wels, &Element{
 			SessionId: els.SessionId,
-			Id:        el,
+			ElementId: el,
 		})
 	}
 
@@ -104,6 +103,7 @@ func (els *Elements) Elements() ([]WebElement, error) {
 // Finds single element by specifying selector strategy and its value
 // Uses Selenium 3 protocol UUID-based string constant
 func (d *Driver) FindElement(by, value string) (WebElement, error) {
+	url := formatActiveSessionUrl(d, "element")
 	data, err := json.Marshal(&FindUsing{
 		Using: by,
 		Value: value,
@@ -113,8 +113,7 @@ func (d *Driver) FindElement(by, value string) (WebElement, error) {
 		return nil, err
 	}
 
-	url := request.UrlArgs(request.Session, d.Session.SessionId, request.Element)
-	el, err := request.Do(http.MethodPost, url, data)
+	el, err := makeReq(d, WithUrl(url), WithMethod(http.MethodPost), WithPayload(data))
 	if err != nil {
 		log.Printf("Find element request: %+v", err)
 		return nil, err
@@ -132,11 +131,12 @@ func (d *Driver) FindElement(by, value string) (WebElement, error) {
 	return &Element{
 		Driver:    d,
 		SessionId: d.Session.SessionId,
-		Id:        id,
+		ElementId: id,
 	}, nil
 }
 
 func (d *Driver) FindElements(by, value string) (WebElements, error) {
+	url := formatActiveSessionUrl(d, "elements")
 	data, err := json.Marshal(&FindUsing{
 		Using: by,
 		Value: value,
@@ -146,15 +146,14 @@ func (d *Driver) FindElements(by, value string) (WebElements, error) {
 		return nil, err
 	}
 
-	url := request.UrlArgs(request.Session, d.Session.SessionId, request.Elements)
-	el, err := request.Do(http.MethodPost, url, data)
+	elsResponse, err := makeReq(d, WithMethod(http.MethodPost), WithUrl(url), WithPayload(data))
 	if err != nil {
 		log.Printf("Find elements request: %+v", err)
 		return nil, err
 	}
 
 	res := new(struct{ Value []map[string]string })
-	if err := json.Unmarshal(el, &res); err != nil {
+	if err := json.Unmarshal(elsResponse, &res); err != nil {
 		log.Printf("Find element unmarshal: %+v", err)
 		return nil, err
 	}
@@ -165,20 +164,21 @@ func (d *Driver) FindElements(by, value string) (WebElements, error) {
 	}
 
 	return &Elements{
-		Driver:    d,
-		SessionId: d.Session.SessionId,
-		Ids:       els,
+		Driver:     d,
+		SessionId:  d.Session.SessionId,
+		ElementsId: els,
 	}, nil
 }
 
 func (e *Element) Click() error {
-	url := request.UrlArgs(request.Session, e.SessionId, request.Element, e.Id, request.Click)
+	url := formatActiveSessionUrl(e.Driver, "element", e.ElementId, "click")
 	data, err := json.Marshal(&Empty{})
 	if err != nil {
 		log.Printf("Error on empty click marshal: %+v", err)
 		return err
 	}
-	rr, err := request.Do(http.MethodPost, url, data)
+	//rr, err := request.Do(http.MethodPost, url, data)
+	rr, err := makeReq(e.Driver, WithMethod(http.MethodPost), WithUrl(url), WithPayload(data))
 	if err != nil {
 		log.Printf("Error on click: %+v", err)
 		return err
@@ -196,15 +196,15 @@ func (e *Element) Click() error {
 // Attribute
 // Returns elements attribute value
 func (e *Element) Attribute(a string) (string, error) {
-	url := request.UrlArgs(request.Session, e.SessionId, request.Element, e.Id, request.Attribute, a)
-	r, err := request.Do(http.MethodGet, url, nil)
+	url := formatActiveSessionUrl(e.Driver, "element", e.ElementId, "attribute", a)
+	rr, err := makeReq(e.Driver, WithMethod(http.MethodGet), WithUrl(url))
 	if err != nil {
 		log.Printf("Get attribute: %+v", err)
 		return "", err
 	}
 
 	attr := new(struct{ Value string })
-	err = json.Unmarshal(r, attr)
+	err = json.Unmarshal(rr, attr)
 	if err != nil {
 		log.Printf("Marshal attribute: %+v", err)
 		return "", nil
@@ -213,66 +213,8 @@ func (e *Element) Attribute(a string) (string, error) {
 	return attr.Value, nil
 }
 
-const (
-	NullKey       = string('\ue000')
-	CancelKey     = string('\ue001')
-	HelpKey       = string('\ue002')
-	BackspaceKey  = string('\ue003')
-	TabKey        = string('\ue004')
-	ClearKey      = string('\ue005')
-	ReturnKey     = string('\ue006')
-	EnterKey      = string('\ue007')
-	ShiftKey      = string('\ue008')
-	ControlKey    = string('\ue009')
-	AltKey        = string('\ue00a')
-	PauseKey      = string('\ue00b')
-	EscapeKey     = string('\ue00c')
-	SpaceKey      = string('\ue00d')
-	PageUpKey     = string('\ue00e')
-	PageDownKey   = string('\ue00f')
-	EndKey        = string('\ue010')
-	HomeKey       = string('\ue011')
-	LeftArrowKey  = string('\ue012')
-	UpArrowKey    = string('\ue013')
-	RightArrowKey = string('\ue014')
-	DownArrowKey  = string('\ue015')
-	InsertKey     = string('\ue016')
-	DeleteKey     = string('\ue017')
-	SemicolonKey  = string('\ue018')
-	EqualsKey     = string('\ue019')
-	Numpad0Key    = string('\ue01a')
-	Numpad1Key    = string('\ue01b')
-	Numpad2Key    = string('\ue01c')
-	Numpad3Key    = string('\ue01d')
-	Numpad4Key    = string('\ue01e')
-	Numpad5Key    = string('\ue01f')
-	Numpad6Key    = string('\ue020')
-	Numpad7Key    = string('\ue021')
-	Numpad8Key    = string('\ue022')
-	Numpad9Key    = string('\ue023')
-	MultiplyKey   = string('\ue024')
-	AddKey        = string('\ue025')
-	SeparatorKey  = string('\ue026')
-	SubstractKey  = string('\ue027')
-	DecimalKey    = string('\ue028')
-	DivideKey     = string('\ue029')
-	F1Key         = string('\ue031')
-	F2Key         = string('\ue032')
-	F3Key         = string('\ue033')
-	F4Key         = string('\ue034')
-	F5Key         = string('\ue035')
-	F6Key         = string('\ue036')
-	F7Key         = string('\ue037')
-	F8Key         = string('\ue038')
-	F9Key         = string('\ue039')
-	F10Key        = string('\ue03a')
-	F11Key        = string('\ue03b')
-	F12Key        = string('\ue03c')
-	MetaKey       = string('\ue03d')
-)
-
 func (e *Element) SendKeys(s string) error {
-	url := request.UrlArgs(request.Session, e.SessionId, request.Element, e.Id, request.Value)
+	url := formatActiveSessionUrl(e.Driver, "element", e.ElementId, "value")
 	k := &SendKeys{
 		Text: s,
 	}
@@ -282,7 +224,7 @@ func (e *Element) SendKeys(s string) error {
 		log.Printf("Send keys on marshal: %+v", err)
 		return err
 	}
-	_, err = request.Do(http.MethodPost, url, data)
+	_, err = makeReq(e.Driver, WithMethod(http.MethodPost), WithUrl(url), WithPayload(data))
 	if err != nil {
 		log.Printf("Click: %+v", err)
 		return err
@@ -294,8 +236,8 @@ func (e *Element) SendKeys(s string) error {
 // Text
 // Returns an element’s text “as rendered”
 func (e *Element) Text() (string, error) {
-	url := request.UrlArgs(request.Session, e.SessionId, request.Element, e.Id, request.Text)
-	r, err := request.Do(http.MethodGet, url, nil)
+	url := formatActiveSessionUrl(e.Driver, "element", e.ElementId, "text")
+	r, err := makeReq(e.Driver, WithMethod(http.MethodPost), WithUrl(url))
 	if err != nil {
 		log.Printf("Get text: %+v", err)
 		return "", err
