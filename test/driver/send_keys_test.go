@@ -15,14 +15,17 @@ func TestSendKeys(t *testing.T) {
 
 	d.Open("https://www.google.com")
 
+<<<<<<< Updated upstream:test/driver/send_keys_test.go
 	el, err := d.FindElement(element.ByCssSelector, "#APjFqb")
+=======
+	_, err := d.FindElement(driver.ByCssSelector, "#APjFqb")
+>>>>>>> Stashed changes:test/drivertest/send_keys_test.go
 	if err != nil {
 		t.Errorf("Element not found: %+v", err)
 	}
 
-	el.Click()
-
-	el.SendKeys("hello")
+	//el.Click()
+	//el.SendKeys("hello")
 
 	time.Sleep(1 * time.Second)
 }

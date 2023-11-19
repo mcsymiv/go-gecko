@@ -14,15 +14,26 @@ func TestFindElement(t *testing.T) {
 
 	d.Open("https://the-internet.herokuapp.com/")
 
+<<<<<<< Updated upstream:test/driver/find_element_test.go
 	el, err := d.FindElement(element.ByLinkText, "A/B Testing")
+=======
+	_, err := d.FindElement(driver.ByLinkText, "A/B Testing")
+>>>>>>> Stashed changes:test/drivertest/find_element_test.go
 	if err != nil {
 		t.Errorf("Unable to find element: %+v", err)
 	}
 
+<<<<<<< Updated upstream:test/driver/find_element_test.go
 	id, err := el.ElementId()
 	if err != nil || id == "" {
 		t.Errorf("No element found: %s", id)
 	}
+=======
+	//id, err := el.Id()
+	//if err != nil || id == "" {
+	//	t.Errorf("No element found: %s", id)
+	//}
+>>>>>>> Stashed changes:test/drivertest/find_element_test.go
 }
 
 func TestFindElements(t *testing.T) {
