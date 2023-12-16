@@ -68,11 +68,13 @@ func loadEnv() {
 func TestPortForward(t *testing.T) {
 	loadEnv()
 
-	d, tear := hooks.StartDriver()
+	d, tear := hooks.Driver(
+		capabilities.ImplicitWait(10000),
+		capabilities.BrowserName("firefox"),
+    )
 	defer tear()
 
 	d.Open("http://192.168.0.1")
-	d.IsPageLoaded()
 	st := step.New(d)
 
 	time.Sleep(2 * time.Second)
@@ -100,7 +102,7 @@ func TestDownload(t *testing.T) {
 
 	d, tear := hooks.Driver(
 		capabilities.ImplicitWait(10000),
-		capabilities.BrowserName("chrome"),
+		capabilities.BrowserName("firefox"),
 	)
 	defer tear()
 
@@ -120,7 +122,7 @@ func TestDownload(t *testing.T) {
 	time.Sleep(2 * time.Second)
 	st.FindCss("[id='search-projects']").Element().SendKeys("dev01")
 	time.Sleep(2 * time.Second)
-	st.FindX(".//aside//span[contains(text(),'Smoke (Concurrent tests')]").Element().Click()
+	st.FindX(".//aside//span[contains(text(),'UI Regression (Concurrent tests')]").Element().Click()
 	time.Sleep(2 * time.Second)
 	st.FindCss("[data-grid-root] [data-test-build-number-link]").Element().Click()
 	time.Sleep(2 * time.Second)
@@ -132,5 +134,8 @@ func TestDownload(t *testing.T) {
 	d.SwitchFrame(allureFrame)
 
 	st.FindX(".//ul[@class='side-nav__menu']//div[text()='Suites']").Element().Click()
+	time.Sleep(2 * time.Second)
+
+  st.FindCss("[data-tooltip='Download CSV']").Element().Click()
 	time.Sleep(2 * time.Second)
 }

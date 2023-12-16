@@ -58,8 +58,8 @@ type NewSessionResponse struct {
 	Capabilities map[string]interface{} `json:"-"`
 }
 
-var GeckoDriverPath string = "/Users/mcs/Development/tools/geckodriver"
-var ChromeDriverPath string = "/Users/mcs/Development/tools/chromedriver"
+var GeckoDriverPath string = "/Users/mcs/Documents/tools/geckodriver"
+var ChromeDriverPath string = "/Users/mcs/Documents/tools/chromedriver"
 
 func NewDriver(capsFn ...capabilities.CapabilitiesFunc) (WebDriver, *exec.Cmd) {
 
