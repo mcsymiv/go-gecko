@@ -29,6 +29,7 @@ type WebDriver interface {
 	PageSource() (string, error)
 	IsPageLoaded()
   SwitchFrame(element.WebElement) error
+  SwitchFrameParent() error
 }
 
 type BrowserCapabilities interface {

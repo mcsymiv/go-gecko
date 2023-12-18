@@ -92,8 +92,35 @@ func (s *Session) GetUrl() (string, error) {
 
 func (s Session) SwitchFrame(e element.WebElement) error {
 	url := path.UrlArgs(path.Session, s.Id, path.SwitchFrame)
-	param := map[string]int{
-		"id": 0,
+	param := map[string]interface{}{
+		"id": e.ElementIdentifier(),
+	}
+	data, err := json.Marshal(param)
+	if err != nil {
+		log.Println("Switch frame marshal error", err)
+		return err
+	}
+
+	rr, err := request.Do(http.MethodPost, url, data)
+	if err != nil {
+		log.Println("Switch frame request error", err)
+		return err
+	}
+
+	val := new(struct{ Value map[string]interface{} })
+	err = json.Unmarshal(rr, val)
+	if err != nil {
+		log.Printf("Switch frame error on unmarshal: %+v", err)
+		return nil
+	}
+
+	return nil
+}
+
+func (s Session) SwitchFrameParent() error {
+	url := path.UrlArgs(path.Session, s.Id, path.SwitchFrameParent)
+	param := map[string]interface{}{
+		"id": nil,
 	}
 	data, err := json.Marshal(param)
 	if err != nil {

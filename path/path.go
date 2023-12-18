@@ -6,25 +6,26 @@ import (
 )
 
 // gecko default port
-const BaseUrl = "http://localhost:4444"
+// const BaseUrl = "http://localhost:4444"
 
 // chrome default port
-// const BaseUrl = "http://localhost:9515"
+const BaseUrl = "http://localhost:9515"
 
 const (
-	Session     = "session"
-	Status      = "status"
-	UrlPath     = "url"
-	Element     = "element"
-	Elements    = "elements"
-	Click       = "click"
-	Value       = "value"
-	Attribute   = "attribute"
-	Text        = "text"
-	PageSource  = "source"
-	Execute     = "execute"
-	ScriptSync  = "sync"
-	SwitchFrame = "frame"
+	Session           = "session"
+	Status            = "status"
+	UrlPath           = "url"
+	Element           = "element"
+	Elements          = "elements"
+	Click             = "click"
+	Value             = "value"
+	Attribute         = "attribute"
+	Text              = "text"
+	PageSource        = "source"
+	Execute           = "execute"
+	ScriptSync        = "sync"
+	SwitchFrame       = "frame"
+	SwitchFrameParent = "frame/parent"
 )
 
 func Url(arg string) string {
