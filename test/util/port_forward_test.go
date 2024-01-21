@@ -70,33 +70,36 @@ func TestPortForward(t *testing.T) {
 
 	d, tear := hooks.Driver(
 		capabilities.ImplicitWait(10000),
-		capabilities.BrowserName("firefox"),
+		capabilities.BrowserName("chrome"),
     )
 	defer tear()
 
 	d.Open("http://192.168.0.1")
 	st := step.New(d)
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(4 * time.Second)
 	st.FindCss("[id='local-pwd-tb'] [type='password']").SendAndSubmit(os.Getenv("PORT_PASS"))
-	time.Sleep(2 * time.Second)
-	st.FindCss("[id='local-login-button'] [title='LOG IN']").Element().Click()
-	time.Sleep(2 * time.Second)
+	time.Sleep(4 * time.Second)
 	st.FindX(".//span[contains(text(),'Advanced')]").Element().Click()
-	time.Sleep(2 * time.Second)
+	time.Sleep(4 * time.Second)
 	st.FindX(".//span[text()='NAT Forwarding']").Element().Click()
-	time.Sleep(2 * time.Second)
+	time.Sleep(4 * time.Second)
 	st.FindX(".//span[text()='Port Forwarding']").Element().Click()
-	time.Sleep(2 * time.Second)
+	time.Sleep(4 * time.Second)
 	st.FindX(".//a[contains(@class,'btn-edit')]").Element().Click()
-	time.Sleep(2 * time.Second)
+	time.Sleep(4 * time.Second)
 	st.FindX(".//span[text()='VIEW CONNECTED DEVICES']").Element().Click()
-	time.Sleep(2 * time.Second)
+	time.Sleep(4 * time.Second)
 	st.FindX(".//span[contains(text(), 'mcs-pc')]/..").Element().Click()
-	time.Sleep(2 * time.Second)
+	time.Sleep(4 * time.Second)
 	st.FindX(".//div[contains(@class,'msg-content-wrap')]//span[text()='SAVE']").Element().Click()
 }
 
+// st.FindX(".//aside//span[contains(text(),'Smoke (Concurrent tests)')]").Element().Click()
+// st.FindX(".//aside//span[contains(text(),'UI Regression (Concurrent tests))]").Element().Click()
+// st.FindX(".//aside//span[contains(text(),'UI Regression (Single Thread)')]").Element().Click()
+// st.FindX(".//aside//span[contains(text(),'Merck Regression')]").Element().Click()
+// st.FindX(".//aside//span[contains(text(),'Smoke (Concurrent tests)')]").Element().Click()
 func TestDownload(t *testing.T) {
 	loadEnv()
 
@@ -122,9 +125,17 @@ func TestDownload(t *testing.T) {
 	time.Sleep(2 * time.Second)
 	st.FindCss("[id='search-projects']").Element().SendKeys("dev01")
 	time.Sleep(2 * time.Second)
-	st.FindX(".//aside//span[contains(text(),'UI Regression (Concurrent tests')]").Element().Click()
+	// st.FindX(".//aside//span[contains(text(),'Smoke (Concurrent tests)')]").Element().Click()
+  st.FindX(".//aside//span[contains(text(),'UI Regression (Concurrent tests)')]").Element().Click()
 	time.Sleep(5 * time.Second)
-	st.FindCss("[data-grid-root] [data-test-build-number-link]").Element().Click()
+  st.FindCss("[data-grid-root] [data-test-build-number-link]").Element().Click()
+  // if required build not first
+  /*
+  buildElements := st.FindAllCss("[data-grid-root] [data-test-build-number-link]").Elements()
+  build, _ := buildElements.Elements()
+  build[6].Click()
+  */
+
 	time.Sleep(5 * time.Second)
 	st.FindCss("[data-tab-title='Allure Report']").Element().Click()
 	time.Sleep(20 * time.Second)
@@ -146,7 +157,8 @@ func TestDownload(t *testing.T) {
 	d.SwitchFrameParent()
 	d.SwitchFrameParent()
 
-	st.FindX(".//aside//span[contains(text(),'Smoke (Concurrent tests)')]").Element().Click()
+	// st.FindX(".//aside//span[contains(text(),'UI Regression (Concurrent tests')]").Element().Click()
+  st.FindX(".//aside//span[contains(text(),'UI Regression (Single Thread)')]").Element().Click()
 	time.Sleep(5 * time.Second)
 	st.FindCss("[data-grid-root] [data-test-build-number-link]").Element().Click()
 	time.Sleep(5 * time.Second)
@@ -163,4 +175,172 @@ func TestDownload(t *testing.T) {
 
   st.FindCss("[data-tooltip='Download CSV']").Element().Click()
 	time.Sleep(2 * time.Second)
+
+  // drill back to allure TC
+	d.SwitchFrameParent()
+	d.SwitchFrameParent()
+
+	// st.FindX(".//aside//span[contains(text(),'UI Regression (Single Thread)')]").Element().Click()
+  st.FindX(".//aside//span[contains(text(),'Merck Regression')]").Element().Click()
+	time.Sleep(5 * time.Second)
+	st.FindCss("[data-grid-root] [data-test-build-number-link]").Element().Click()
+	time.Sleep(5 * time.Second)
+	st.FindCss("[data-tab-title='Allure Report']").Element().Click()
+	time.Sleep(20 * time.Second)
+	allureFrame1 = st.FindCss("[id*='iFrameResizer']").Element()
+	d.SwitchFrame(allureFrame1)
+	
+  allureFrame2 = st.FindCss("[id='iframe']").Element()
+	d.SwitchFrame(allureFrame2)
+
+	st.FindX(".//ul[@class='side-nav__menu']//div[text()='Suites']").Element().Click()
+	time.Sleep(2 * time.Second)
+
+  st.FindCss("[data-tooltip='Download CSV']").Element().Click()
+	time.Sleep(2 * time.Second)
+
+  // drill back to allure TC
+	d.SwitchFrameParent()
+	d.SwitchFrameParent()
+
+  /*
+  st.FindX(".//aside//span[contains(text(),'4.2 - Oliver Templates Regression')]").Element().Click()
+	time.Sleep(5 * time.Second)
+	st.FindCss("[data-grid-root] [data-test-build-number-link]").Element().Click()
+	time.Sleep(5 * time.Second)
+	st.FindCss("[data-tab-title='Allure Report']").Element().Click()
+	time.Sleep(20 * time.Second)
+	allureFrame1 = st.FindCss("[id*='iFrameResizer']").Element()
+	d.SwitchFrame(allureFrame1)
+	
+  allureFrame2 = st.FindCss("[id='iframe']").Element()
+	d.SwitchFrame(allureFrame2)
+
+	st.FindX(".//ul[@class='side-nav__menu']//div[text()='Suites']").Element().Click()
+	time.Sleep(2 * time.Second)
+
+  st.FindCss("[data-tooltip='Download CSV']").Element().Click()
+	time.Sleep(2 * time.Second)
+
+  // drill back to allure TC
+	d.SwitchFrameParent()
+	d.SwitchFrameParent()
+  */
+
+  st.FindX(".//aside//span[contains(text(),'4.3 - Hilton Templates Regression')]").Element().Click()
+	time.Sleep(5 * time.Second)
+	st.FindCss("[data-grid-root] [data-test-build-number-link]").Element().Click()
+	time.Sleep(5 * time.Second)
+	st.FindCss("[data-tab-title='Allure Report']").Element().Click()
+	time.Sleep(20 * time.Second)
+	allureFrame1 = st.FindCss("[id*='iFrameResizer']").Element()
+	d.SwitchFrame(allureFrame1)
+	
+  allureFrame2 = st.FindCss("[id='iframe']").Element()
+	d.SwitchFrame(allureFrame2)
+
+	st.FindX(".//ul[@class='side-nav__menu']//div[text()='Suites']").Element().Click()
+	time.Sleep(2 * time.Second)
+
+  st.FindCss("[data-tooltip='Download CSV']").Element().Click()
+	time.Sleep(2 * time.Second)
+
+  // drill back to allure TC
+	d.SwitchFrameParent()
+	d.SwitchFrameParent()
+
+  /*
+  st.FindX(".//aside//span[contains(text(),'4.4 - GM Templates Regression')]").Element().Click()
+	time.Sleep(5 * time.Second)
+	st.FindCss("[data-grid-root] [data-test-build-number-link]").Element().Click()
+	time.Sleep(5 * time.Second)
+	st.FindCss("[data-tab-title='Allure Report']").Element().Click()
+	time.Sleep(20 * time.Second)
+	allureFrame1 = st.FindCss("[id*='iFrameResizer']").Element()
+	d.SwitchFrame(allureFrame1)
+	
+  allureFrame2 = st.FindCss("[id='iframe']").Element()
+	d.SwitchFrame(allureFrame2)
+
+	st.FindX(".//ul[@class='side-nav__menu']//div[text()='Suites']").Element().Click()
+	time.Sleep(2 * time.Second)
+
+  st.FindCss("[data-tooltip='Download CSV']").Element().Click()
+	time.Sleep(2 * time.Second)
+
+  // drill back to allure TC
+	d.SwitchFrameParent()
+	d.SwitchFrameParent()
+  */
+
+  st.FindX(".//aside//span[contains(text(),'4.5 - Business Scenarios Regression')]").Element().Click()
+	time.Sleep(5 * time.Second)
+	st.FindCss("[data-grid-root] [data-test-build-number-link]").Element().Click()
+	time.Sleep(5 * time.Second)
+	st.FindCss("[data-tab-title='Allure Report']").Element().Click()
+	time.Sleep(20 * time.Second)
+	allureFrame1 = st.FindCss("[id*='iFrameResizer']").Element()
+	d.SwitchFrame(allureFrame1)
+	
+  allureFrame2 = st.FindCss("[id='iframe']").Element()
+	d.SwitchFrame(allureFrame2)
+
+	st.FindX(".//ul[@class='side-nav__menu']//div[text()='Suites']").Element().Click()
+	time.Sleep(2 * time.Second)
+
+  st.FindCss("[data-tooltip='Download CSV']").Element().Click()
+	time.Sleep(2 * time.Second)
+}
+
+func TestScreenshot(t *testing.T) {
+	loadEnv()
+
+	d, tear := hooks.Driver(
+		capabilities.ImplicitWait(10000),
+		capabilities.BrowserName("chrome"),
+	)
+	defer tear()
+
+	d.Open(os.Getenv("DOWNLOAD_URL"))
+	d.IsPageLoaded()
+
+	st := step.New(d)
+	st.FindX(".//a[text()='Log in using Azure Active Directory']").Element().Click()
+	time.Sleep(2 * time.Second)
+	st.FindCss("[id='i0116']").SendAndSubmit(os.Getenv("DOWNLOAD_LOGIN"))
+	time.Sleep(2 * time.Second)
+	st.FindCss("[id='i0118']").SendAndSubmit(os.Getenv("DOWNLOAD_PASS"))
+	time.Sleep(2 * time.Second)
+	st.FindCss("[id='idSIButton9']").Element().Click()
+	time.Sleep(2 * time.Second)
+	st.FindX(".//span[text()='Projects']").Element().Click()
+	time.Sleep(2 * time.Second)
+	st.FindCss("[id='search-projects']").Element().SendKeys("dev01")
+	time.Sleep(2 * time.Second)
+	// st.FindX(".//aside//span[contains(text(),'Smoke (Concurrent tests)')]").Element().Click()
+  st.FindX(".//aside//span[contains(text(),'GM')]").Element().Click()
+	time.Sleep(5 * time.Second)
+  st.FindCss("[data-grid-root] [data-test-build-number-link]").Element().Click()
+  // if required build not first
+  /*
+  buildElements := st.FindAllCss("[data-grid-root] [data-test-build-number-link]").Elements()
+  build, _ := buildElements.Elements()
+  build[6].Click()
+  */
+	time.Sleep(5 * time.Second)
+	st.FindCss("[data-tab-title='Allure Report']").Element().Click()
+	time.Sleep(20 * time.Second)
+
+  allureFrame1 := st.FindCss("[id*='iFrameResizer']").Element()
+	d.SwitchFrame(allureFrame1)
+	
+  allureFrame2 := st.FindCss("[id='iframe']").Element()
+	d.SwitchFrame(allureFrame2)
+
+	st.FindX(".//ul[@class='side-nav__menu']//div[text()='Categories']").Element().Click()
+	time.Sleep(2 * time.Second)
+
+  st.FindX(".//div[contains(@class,'side__left')]//div[contains(text(),'Product defects')]").Element().Click()
+	time.Sleep(2 * time.Second)
+
 }

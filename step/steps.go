@@ -11,12 +11,14 @@ import (
 type WebStep interface {
 	session.WebDriver
   Element() element.WebElement
+  Elements() element.WebElements
   SendAndSubmit(input string) WebStep
 }
 
 type Step struct {
 	session.WebDriver
   StepElement element.WebElement
+  StepElements element.WebElements
 }
 
 func New(s session.WebDriver) *Step {
@@ -27,6 +29,10 @@ func New(s session.WebDriver) *Step {
 
 func (s Step) Element() element.WebElement {
   return s.StepElement
+}
+
+func (s Step) Elements() element.WebElements {
+  return s.StepElements
 }
 
 // FindAndClick
@@ -55,6 +61,20 @@ func (s Step) FindX(val string) WebStep {
 
   return newStep
 }
+
+func (s Step) FindAllCss(val string) WebStep {
+  el, err := s.WebDriver.FindElements(element.ByCssSelector, val)
+  if err != nil {
+    log.Println("Unable to find element by css", err)
+  }
+
+  newStep := Step{
+    StepElements: el,
+  }
+
+  return newStep
+}
+
 
 func (s Step) FindCss(val string) WebStep {
   el, err := s.WebDriver.FindElement(element.ByCssSelector, val)

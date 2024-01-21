@@ -58,7 +58,7 @@ type FindUsing struct {
 // ElementId
 // Returns Element w3c id
 // Which is bound to the selenium.WebElementIdentifier
-func (e *Element) ElementId() (string, error) {
+func (e Element) ElementId() (string, error) {
 	if e.Id == "" {
 		return "", fmt.Errorf("No id for element: %+v", e)
 	}
@@ -68,7 +68,7 @@ func (e *Element) ElementId() (string, error) {
 // ElementIdentifier
 // Returns w3c element full value
 // For example: {"value": {"webelementIdentifier": "element-id"}}
-func (e *Element) ElementIdentifier() map[string]string {
+func (e Element) ElementIdentifier() map[string]string {
 	return map[string]string{
 		selenium.WebElementIdentifier: e.Id,
 	}
@@ -77,7 +77,7 @@ func (e *Element) ElementIdentifier() map[string]string {
 // Elements
 // Converts returned elements ids by driver
 // Into usable slice of WebElements
-func (els *Elements) Elements() ([]WebElement, error) {
+func (els Elements) Elements() ([]WebElement, error) {
 	var wels []WebElement
 
 	if len(els.Ids) == 0 {
