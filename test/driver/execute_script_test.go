@@ -1,8 +1,9 @@
 package driver
 
 import (
-	"github.com/mcsymiv/go-gecko/hooks"
 	"testing"
+
+	"github.com/mcsymiv/go-gecko/hooks"
 
 	"github.com/mcsymiv/go-gecko/element"
 )
@@ -14,7 +15,7 @@ func TestExecuteScriptSync(t *testing.T) {
 
 	d.Open("https://the-internet.herokuapp.com/")
 
-	err := d.ExecuteScriptSync("document.querySelector('#content li a').click()")
+	_, err := d.ExecuteScriptSync("document.querySelector('#content li a').click()")
 	if err != nil {
 		t.Errorf("Failed script: %+v", err)
 	}
@@ -24,7 +25,7 @@ func TestExecuteScriptSync(t *testing.T) {
 		t.Errorf("Failed find el: %+v:", err)
 	}
 
-	err = d.ExecuteScriptSync("arguments[0].click()", el.ElementIdentifier())
+	_, err = d.ExecuteScriptSync("arguments[0].click()", el.ElementIdentifier())
 	if err != nil {
 		t.Errorf("Failed to pass el as arg: %+v", err)
 	}
