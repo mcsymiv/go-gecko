@@ -17,6 +17,7 @@ type RequestOptions struct {
 	Url     string
 	Payload []byte
 	Headers map[string]string
+	Port    int
 }
 
 type RequestOptionFunc func(*RequestOptions)

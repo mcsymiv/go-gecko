@@ -65,7 +65,7 @@ type FindUsing struct {
 // Which is bound to the selenium.WebElementIdentifier
 func (e *Element) Id() (string, error) {
 	if e.ElementId == "" {
-		return "", fmt.Errorf("No id for element: %+v", e)
+		return "", fmt.Errorf("no id for element: %+v", e)
 	}
 	return e.ElementId, nil
 }
@@ -86,7 +86,7 @@ func (els *Elements) Elements() ([]WebElement, error) {
 	var wels []WebElement
 
 	if len(els.ElementsId) == 0 {
-		return nil, fmt.Errorf("No element ids. Empty slice of web elements: %+v", els)
+		return nil, fmt.Errorf("no element ids. Empty slice of web elements: %+v", els)
 	}
 
 	for _, el := range els.ElementsId {
@@ -104,10 +104,7 @@ func (els *Elements) Elements() ([]WebElement, error) {
 // Uses Selenium 3 protocol UUID-based string constant
 func (d *Driver) FindElement(by, value string) (WebElement, error) {
 	url := formatActiveSessionUrl(d, "element")
-	data, err := json.Marshal(&FindUsing{
-		Using: by,
-		Value: value,
-	})
+	data, err := json.Marshal(&FindUsing{by, value})
 	if err != nil {
 		log.Printf("Find element marshal: %+v", err)
 		return nil, err
