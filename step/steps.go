@@ -1,34 +1,29 @@
 package step
 
-import (
-	"log"
-	"testing"
-
-	"github.com/mcsymiv/go-gecko/element"
-	"github.com/mcsymiv/go-gecko/session"
-)
+import "github.com/mcsymiv/go-gecko/driver"
 
 type WebStep interface {
-	session.WebDriver
-  Element() element.WebElement
-  SendAndSubmit(input string) WebStep
+	driver.WebDriver
+	Element() driver.WebElement
+	SendAndSubmit(input string) WebStep
 }
 
 type Step struct {
-	session.WebDriver
-  StepElement element.WebElement
+	driver.WebDriver
+	StepElement driver.WebElement
 }
 
-func New(s session.WebDriver) *Step {
+func New(s driver.WebDriver) *Step {
 	return &Step{
 		WebDriver: s,
 	}
 }
 
-func (s Step) Element() element.WebElement {
-  return s.StepElement
+func (s Step) Element() driver.WebElement {
+	return s.StepElement
 }
 
+/*
 // FindAndClick
 // Convenience method
 // Wraps FindElement and Click actions
@@ -80,3 +75,5 @@ func (s Step) SendAndSubmit(input string) WebStep {
   }
   return newStep
 }
+
+*/

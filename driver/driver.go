@@ -1,23 +1,36 @@
 package driver
 
 import (
+	"bytes"
 	"encoding/json"
-	"github.com/mcsymiv/go-gecko/capabilities"
-	"github.com/mcsymiv/go-gecko/service"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os/exec"
 	"time"
+
+	"github.com/mcsymiv/go-gecko/capabilities"
+	"github.com/mcsymiv/go-gecko/service"
 )
+
+type GoDriver struct {
+	WebDriver
+	Config
+}
+
+type Config struct {
+	Timeout time.Duration
+}
 
 // WebDriver
 // https://w3c.github.io/webdriver/
 type WebDriver interface {
 	Open(u string) error
-	GetUrl() (string, error)
+	// GetUrl() (string, error)
 	Quit()
 	FindElement(b, v string) (WebElement, error)
-	FindElements(b, v string) (WebElements, error)
+	// FindElements(b, v string) (WebElements, error)
 
 	// Service util function
 	// To stop/kill local driver process
@@ -26,7 +39,7 @@ type WebDriver interface {
 	// MakeRequest
 	// Performs API request on driver
 	// TODO: Can be adjusted to make custom API calls if exposed correctly
-	MakeRequest(options ...service.RequestOptionFunc) ([]byte, error)
+	// MakeRequest(options ...service.RequestOptionFunc) ([]byte, error)
 }
 
 type Driver struct {
@@ -42,9 +55,11 @@ func NewDriver(capsFn ...capabilities.CapabilitiesFunc) WebDriver {
 		capFn(&caps)
 	}
 
+	log.Printf("%+v", caps)
+
 	cmd, err := service.NewService(&caps)
 	if err != nil {
-		log.Fatal("Unable to start driver service", err)
+		log.Fatal("unable to start driver service", err)
 	}
 
 	// Tries to get driver status for 2 seconds
@@ -81,12 +96,19 @@ func (d *Driver) Service() *exec.Cmd {
 	return d.ServiceCmd
 }
 
-func (d *Driver) Quit() {
-	url := formatActiveSessionUrl(d)
-	_, err := d.MakeRequest(
-		d.Client.RequestOptions.WithMethod(http.MethodDelete),
-		d.Client.RequestOptions.WithUrl(url),
-	)
+func (d Driver) Quit() {
+	url := fmt.Sprintf("http://localhost:4444/session/%s", d.Session.SessionId)
+	req, _ := http.NewRequest(http.MethodDelete, url, nil)
+	req.Header.Add("Accept", "json/application")
+	c := &http.Client{}
+	res, err := c.Do(req)
+	if err != nil {
+		log.Printf("Error quit request: %+v", err)
+	}
+
+	defer res.Body.Close()
+
+	_, err = io.ReadAll(res.Body)
 	if err != nil {
 		log.Printf("Error quit request: %+v", err)
 	}
@@ -94,25 +116,53 @@ func (d *Driver) Quit() {
 
 // Open
 // Goes to url
-func (d *Driver) Open(u string) error {
-	url := formatActiveSessionUrl(d, "url")
+func (d Driver) Open(u string) error {
+	url := fmt.Sprintf("http://localhost:4444/session/%s/url", d.Session.SessionId)
 	data, _ := json.Marshal(map[string]string{
 		"url": u,
 	})
-
-	_, err := d.MakeRequest(
-		d.Client.RequestOptions.WithMethod(http.MethodPost),
-		d.Client.RequestOptions.WithUrl(url),
-		d.Client.RequestOptions.WithPayload(data),
-	)
+	req, _ := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(data))
+	req.Header.Add("Accept", "json/application")
+	c := &http.Client{}
+	res, err := c.Do(req)
 	if err != nil {
-		log.Printf("Error make request: %+v", err)
+		log.Printf("Error quit request: %+v", err)
+	}
+
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	reply := make(map[string]string)
+	if err := json.Unmarshal(body, &reply); err != nil {
+		log.Println("Status unmarshal error", err)
 		return err
 	}
 
 	return nil
+	// url := formatActiveSessionUrl(d, "url")
+	// url := fmt.Sprintf("%s/session/%s/url", d.Client.RequestOptions.Url, d.Session.SessionId)
+	// data, _ := json.Marshal(map[string]string{
+	// 	"url": u,
+	// })
+
+	// _, err := d.MakeRequest(
+	// 	d.Client.RequestOptions.WithMethod(http.MethodPost),
+	// 	d.Client.RequestOptions.WithUrl(url),
+	// 	d.Client.RequestOptions.WithPayload(data),
+	// )
+	// if err != nil {
+	// 	log.Printf("Error make request: %+v", err)
+	// 	return err
+	// }
+
+	return nil
 }
 
+/*
 func (d *Driver) GetUrl() (string, error) {
 	url := formatActiveSessionUrl(d, "url")
 	rr, err := d.MakeRequest(
@@ -133,13 +183,16 @@ func (d *Driver) GetUrl() (string, error) {
 
 	return val.Value, nil
 }
+*/
 
 // MakeRequest
 // Wrapper function exposed on WebDriver to make external API calls
 // Uses private client.makeReq implementation
+/*
 func (d *Driver) MakeRequest(options ...service.RequestOptionFunc) ([]byte, error) {
 	return d.Client.MakeRequest(options...)
 }
+*/
 
 func formatActiveSessionUrl(d *Driver, args ...string) string {
 	return ""

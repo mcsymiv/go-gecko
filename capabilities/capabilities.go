@@ -7,14 +7,14 @@ type Capabilities struct {
 }
 
 type BrowserCapabilities struct {
-	AlwaysMatch AlwaysMatch `json:"alwaysMatch"`
+	AlwaysMatch `json:"alwaysMatch"`
 }
 
 type AlwaysMatch struct {
-	AcceptInsecureCerts bool       `json:"acceptInsecureCerts"`
-	BrowserName         string     `json:"browserName"`
-	Timeouts            Timeouts   `json:"timeouts,omitempty"`
-	MozOptions          MozOptions `json:"moz:firefoxOptions,omitempty"`
+	AcceptInsecureCerts bool   `json:"acceptInsecureCerts"`
+	BrowserName         string `json:"browserName"`
+	Timeouts            `json:"timeouts,omitempty"`
+	MozOptions          `json:"moz:firefoxOptions,omitempty"`
 }
 
 type Timeouts struct {
@@ -27,6 +27,11 @@ type MozOptions struct {
 	Profile string   `json:"profile,omitempty"`
 	Binary  string   `json:"binary,omitempty"`
 	Args    []string `json:"args,omitempty"`
+	Log     `json:"log,omitempty"`
+}
+
+type Log struct {
+	Level string `json:"level,omitempty"`
 }
 
 // CapabilitiesFunc Usage:
@@ -56,8 +61,7 @@ type CapabilitiesFunc func(*Capabilities)
 // To reference and build current driver url
 func DefaultCapabilities() Capabilities {
 	return Capabilities{
-		Port: ":4444",
-		Host: "http://localhost",
+		Port: "4444",
 		Capabilities: BrowserCapabilities{
 			AlwaysMatch{
 				AcceptInsecureCerts: true,
@@ -85,14 +89,14 @@ func BrowserName(b string) CapabilitiesFunc {
 	}
 }
 
-func Port(p string) CapabilitiesFunc {
-	return func(caps *Capabilities) {
-		caps.Port = p
-	}
-}
+// func Port(p string) CapabilitiesFunc {
+// 	return func(caps *Capabilities) {
+// 		caps.Port = p
+// 	}
+// }
 
-func Host(h string) CapabilitiesFunc {
-	return func(caps *Capabilities) {
-		caps.Host = h
-	}
-}
+// func Host(h string) CapabilitiesFunc {
+// 	return func(caps *Capabilities) {
+// 		caps.Host = h
+// 	}
+// }

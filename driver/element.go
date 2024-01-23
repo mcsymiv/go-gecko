@@ -1,10 +1,7 @@
 package driver
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
 
 	"github.com/mcsymiv/go-gecko/selenium"
 )
@@ -23,10 +20,12 @@ const (
 type WebElement interface {
 	Id() (string, error)
 	ElementIdentifier() map[string]string
-	Click() error
-	SendKeys(keys string) error
-	Attribute(attr string) (string, error)
-	Text() (string, error)
+	/*
+		Click() error
+		SendKeys(keys string) error
+		Attribute(attr string) (string, error)
+		Text() (string, error)
+	*/
 }
 
 type WebElements interface {
@@ -103,38 +102,44 @@ func (els *Elements) Elements() ([]WebElement, error) {
 // Finds single element by specifying selector strategy and its value
 // Uses Selenium 3 protocol UUID-based string constant
 func (d *Driver) FindElement(by, value string) (WebElement, error) {
-	url := formatActiveSessionUrl(d, "element")
-	data, err := json.Marshal(&FindUsing{
-		Using: by,
-		Value: value,
-	})
-	if err != nil {
-		log.Printf("Find element marshal: %+v", err)
-		return nil, err
-	}
+	// url := formatActiveSessionUrl(d, "element")
+	// data, err := json.Marshal(&FindUsing{
+	// 	Using: by,
+	// 	Value: value,
+	// })
+	// if err != nil {
+	// 	log.Printf("Find element marshal: %+v", err)
+	// 	return nil, err
+	// }
 
-	el, err := makeReq(d, WithUrl(url), WithMethod(http.MethodPost), WithPayload(data))
-	if err != nil {
-		log.Printf("Find element request: %+v", err)
-		return nil, err
-	}
+	// el, err := d.MakeRequest(
+	// 	d.Client.RequestOptions.WithUrl(url),
+	// 	d.Client.RequestOptions.WithMethod(http.MethodPost),
+	// 	d.Client.RequestOptions.WithPayload(data),
+	// )
+	// if err != nil {
+	// 	log.Printf("Find element request: %+v", err)
+	// 	return nil, err
+	// }
 
-	res := new(struct{ Value map[string]string })
-	if err := json.Unmarshal(el, &res); err != nil {
-		log.Printf("Find element unmarshal: %+v", err)
-		return nil, err
-	}
+	// res := new(struct{ Value map[string]string })
+	// if err := json.Unmarshal(el, &res); err != nil {
+	// 	log.Printf("Find element unmarshal: %+v", err)
+	// 	return nil, err
+	// }
 
-	// Retrieves w3c element id
-	id := selenium.ElementID(res.Value)
+	// // Retrieves w3c element id
+	// id := selenium.ElementID(res.Value)
 
-	return &Element{
-		Driver:    d,
-		SessionId: d.Session.SessionId,
-		ElementId: id,
-	}, nil
+	// return &Element{
+	// 	Driver:    d,
+	// 	SessionId: d.Session.SessionId,
+	// 	ElementId: id,
+	// }, nil
+	return nil, nil
 }
 
+/*
 func (d *Driver) FindElements(by, value string) (WebElements, error) {
 	url := formatActiveSessionUrl(d, "elements")
 	data, err := json.Marshal(&FindUsing{
@@ -170,7 +175,8 @@ func (d *Driver) FindElements(by, value string) (WebElements, error) {
 	}, nil
 }
 
-func (e *Element) Click() error {
+
+func (e Element) Click() error {
 	url := formatActiveSessionUrl(e.Driver, "element", e.ElementId, "click")
 	data, err := json.Marshal(&Empty{})
 	if err != nil {
@@ -178,7 +184,11 @@ func (e *Element) Click() error {
 		return err
 	}
 	//rr, err := request.Do(http.MethodPost, url, data)
-	rr, err := makeReq(e.Driver, WithMethod(http.MethodPost), WithUrl(url), WithPayload(data))
+	rr, err := d.MakeRequest(
+		d.Client.RequestOptions.WithMethod(http.MethodPost),
+		d.Client.RequestOptions.	WithUrl(url),
+		d.Client.RequestOptions.	WithPayload(data),
+	)
 	if err != nil {
 		log.Printf("Error on click: %+v", err)
 		return err
@@ -252,3 +262,4 @@ func (e *Element) Text() (string, error) {
 
 	return text.Value, nil
 }
+*/

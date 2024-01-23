@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/mcsymiv/go-gecko/capabilities"
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/mcsymiv/go-gecko/capabilities"
 )
 
 type Session struct {
@@ -25,10 +26,10 @@ type DriverStatus struct {
 func NewSession(caps *capabilities.Capabilities) (*Session, error) {
 	data, err := json.Marshal(caps)
 	if err != nil {
-		log.Printf("New driver marshall error: %+v", err)
+		log.Printf("new driver marshall error: %+v", err)
 		return nil, err
 	}
-	url := fmt.Sprintf("%s%s/session", caps.Host, caps.Port)
+	url := fmt.Sprintf("http://%s:%s/session", caps.Host, caps.Port)
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(data))
 	if err != nil {
 		return nil, err
@@ -64,7 +65,7 @@ func NewSession(caps *capabilities.Capabilities) (*Session, error) {
 // but may additionally include arbitrary meta information
 // that is specific to the implementation.
 func GetStatus(caps *capabilities.Capabilities) (*DriverStatus, error) {
-	url := fmt.Sprintf("%s%s/status", caps.Host, caps.Port)
+	url := fmt.Sprintf("http://%s:%s/status", caps.Host, caps.Port)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err

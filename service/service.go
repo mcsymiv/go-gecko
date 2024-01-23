@@ -1,13 +1,15 @@
 package service
 
 import (
-	"github.com/mcsymiv/go-gecko/capabilities"
+	"fmt"
 	"log"
 	"os/exec"
+
+	"github.com/mcsymiv/go-gecko/capabilities"
 )
 
-var GeckoDriverPath string = "/Users/mcs/Development/tools/geckodriver"
-var ChromeDriverPath string = "/Users/mcs/Development/tools/chromedriver"
+var GeckoDriverPath string = "/Users/mcs/Documents/tools/geckodriver"
+var ChromeDriverPath string = "/Users/mcs/Documents/tools/chromedriver"
 
 // NewService
 // Use capabilities to specify driver executable args
@@ -36,9 +38,9 @@ func driverCommand(cap *capabilities.Capabilities) []string {
 	}
 
 	if cap.Capabilities.AlwaysMatch.BrowserName == "firefox" {
-		cmdArgs = append(cmdArgs, GeckoDriverPath, "--port", "4444")
+		cmdArgs = append(cmdArgs, GeckoDriverPath, "--port", cap.Port)
 	} else {
-		cmdArgs = append(cmdArgs, ChromeDriverPath)
+		cmdArgs = append(cmdArgs, ChromeDriverPath, fmt.Sprintf("--port=%s", cap.Port))
 	}
 
 	cmdArgs = append(cmdArgs, ">", "logs/session.log", "2>&1", "&")
